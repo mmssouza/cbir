@@ -7,7 +7,7 @@ import aii
 
 diretorio = sys.argv[1]
 area = float(sys.argv[2])
-bins = int(sys.argv[3])
+bins = int(round(float(sys.argv[3])))
 rmin = float(sys.argv[4])
 rmax = float(sys.argv[5])
 

@@ -6,8 +6,8 @@ import cPickle
 import descritores
 
 diretorio = sys.argv[1]
-raio = int(sys.argv[2])
-bins = int(sys.argv[3])
+raio = int(round(float(sys.argv[2])))
+bins = int(round(float(sys.argv[3])))
 rmin = float(sys.argv[4])
 rmax = float(sys.argv[5])
 

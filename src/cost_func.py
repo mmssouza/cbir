@@ -5,10 +5,11 @@ import shlex
 import tempfile
 import os
 import cStringIO
+import numpy as np
 
 def cost_func(args):
 
- args = shlex.split(args)
+ args = shlex.split(str(args))
  aii_args = args[0:4]
  curv_args = args[4:8]
  angle_args = args[8:12]
@@ -35,5 +36,6 @@ def cost_func(args):
  os.remove(tmp2.name)
  return float(res)
 
-cost_func('0.15 25 0.1 1.0 27.0 30 -2000 2000 20 10 0.15 3.14 10 0.1 1.0')
+cost_func(np.array([0.15,25,0.1,1.0,27.0,30,-2000,2000,20,10,0.15,3.14,10,0.1,1.0]))
+
 

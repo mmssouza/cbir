@@ -9,7 +9,9 @@ import numpy as np
 
 def cost_func(args):
 
- args = shlex.split(str(args))
+ args = shlex.split(str(args.tolist()).lstrip('[').rstrip(']'))
+ args = [a.strip(',') for a in args]
+
  aii_args = args[0:4]
  curv_args = args[4:8]
  angle_args = args[8:12]
@@ -34,8 +36,10 @@ def cost_func(args):
  os.remove(tmp0.name)
  os.remove(tmp1.name)
  os.remove(tmp2.name)
+ print res
  return float(res)
 
-cost_func(np.array([0.15,25,0.1,1.0,27.0,30,-2000,2000,20,10,0.15,3.14,10,0.1,1.0]))
+r = cost_func(np.array([0.5,15,0.10,0.8,27.0,15,-2000,2000,20,15,0.05,3.14,15,0.1,1.0]))
 
+print r
 

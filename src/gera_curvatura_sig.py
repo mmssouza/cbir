@@ -6,7 +6,10 @@ import cPickle
 import descritores as desc
 
 diretorio = sys.argv[1]
-sigma = 25.
+sigma = float(sys.argv[2])
+bins = int(sys.argv[3])
+rmin = float(sys.argv[4])
+rmax = float(sys.argv[5])
 
 f = open(diretorio+"classes.txt","r")
 cl = cPickle.load(f)
@@ -16,10 +19,9 @@ db = {}
 
 for im_file in cl.keys():
    tmp = desc.curvatura(diretorio+im_file,np.array([sigma]))
-   h = np.histogram(tmp.curvs[0],bins = 30,range = (-1000.,1000.))
+   h = np.histogram(tmp.curvs[0],bins = bins,range = (rmin,rmax))
    h = h[0].astype(float)/float(h[0].sum())
-   print im_file,h
    db[im_file] = np.hstack((cl[im_file],h))
 #   print im_file,db[im_file]
    
-cPickle.dump(db,open(sys.argv[2],"w"))
+cPickle.dump(db,open(sys.argv[6],"a"))

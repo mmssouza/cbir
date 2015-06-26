@@ -23,16 +23,22 @@ def worker(in_q,out_q):
     out_q.put(d)
     return
 
-if __name__ == '__main__': 
- print "abrindo databases"
+if __name__ == '__main__':
+
+# print "abrindo databases"
 # databases
 # Curvaturas
+# print sys.argv[1]
  db1 = cPickle.load(open(sys.argv[1]))
 # Angle sequence signature
+# print sys.argv[2]
  db2 = cPickle.load(open(sys.argv[2]))
 # Centroid distance
+# print sys.argv[3]
  db3 = cPickle.load(open(sys.argv[3]))
+
 # Area integral invariant
+# print sys.argv[4]
  db4 = cPickle.load(open(sys.argv[4]))
 
 # nome das figuras
@@ -41,7 +47,7 @@ if __name__ == '__main__':
 # dicionario nome das figuras - classes
  cl = dict(zip(name_arr,[db1[n][0] for n in name_arr]))
 
- print "gerando base de histogramas"
+# print "gerando base de histogramas"
 # vetores de caracteristicas e classes
 #data = scipy.array([scipy.fromstring(db[nome],sep=' ')[0:70] for nome in name_arr])
  data = scipy.array([[db1[n][1:],db2[n][1:],db3[n][1:],db4[n][1:]] for n in name_arr])
@@ -91,7 +97,7 @@ if __name__ == '__main__':
 # Acumulador para contabilizar desempenho do experimento
  tt = 0
 
- print "Calculando bull eye score"
+ #print "Calculando bull eye score"
  for i,nome in zip(scipy.arange(Nobj),name_arr):
  # Para cada linha de md estabelece rank de recuperação
  # ordenando a linha em ordem crescente de similaridade 
@@ -113,5 +119,5 @@ if __name__ == '__main__':
   tt = tt + tp
     
 # Bull eye
- print 100*tt/float(1400*20)  
+ print tt/float(1400*20)  
 

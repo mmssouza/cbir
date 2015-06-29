@@ -1,16 +1,15 @@
 import scipy
 import numpy as np
-from numpy.random import shuffle,random_integers
+from numpy.random import shuffle,random_integers,rand
 import scipy.spatial.distance
 
-class de_cluster:
+class de:
 
- def __init__(self,fitness_func,npop = 50,pr = 0.7,beta = 5.0,debug=False):
+ def __init__(self,fitness_func,npop = 10,pr = 0.7,beta = 5.0,debug=False):
   self.ns = npop
   self.bmax = beta
   self.pr  = pr 
   self.debug = debug
-  self.distance = distance
   self.pop = [self.gera_individuo() for i in scipy.arange(self.ns)]
   self.fitness_func = fitness_func
   self.fit = scipy.zeros((self.ns,1))
@@ -21,7 +20,32 @@ class de_cluster:
  
  def gera_individuo(self):
    
+   l = []
+   #aii
+   l.append(0.1 + 0.85*rand()) # raio
+   l.append(5+500*rand()) # bins
+   l.append(0.2*rand()) # hist range min
+   l.append(1.0 - 0.3*rand()) # hist range max
+   #curv
+   l.append(20+rand()*20) # sigma
+   l.append(5+500*rand()) # bins
+   a = rand(2)
+   l.append(-200-4000*a.min()) # hist range min
+   l.append(200+4000*a.max()) # hist range max
+   #angle
+   l.append(15+5*rand()) # raio
+   l.append(5+500*rand()) # bins
+   l.append(rand()) # hist range min
+   l.append(1.5 + (np.pi - 1.5)*rand()) # hist range max
+   #cd
+   l.append(5+500*rand()) # bins
+   l.append(0.15*rand()) # hist range min
+   l.append(0.25 + 0.75*rand()) # hist range max
+
+   return np.array(l) 
+
  def avalia_aptidao(self,x):
+  return (self.fitness_func(x),x)
    
  def individuo_valido(self,x):  
   valido = False
@@ -84,7 +108,7 @@ class de_cluster:
   for i in scipy.arange(self.ns):
    self.fit[i],self.pop[i] = self.avalia_aptidao(self.pop[i]) 
   
-class pso_cluster:
+class pso:
 
  def __init__(self,fitness_func,npop = 20,w = 0.5,c1 = 2.01,c2 = 2.02,debug = False):
   self.debug = debug

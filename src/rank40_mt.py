@@ -65,7 +65,7 @@ if __name__ == '__main__':
  for p in threads:
   p.start()
  
- print "Calculando matriz de distancias"
+# print "Calculando matriz de distancias"
  in_q.put(scipy.vstack(data[:,0]))
  in_q.put(scipy.vstack(data[:,1]))
  in_q.put(scipy.vstack(data[:,2]))

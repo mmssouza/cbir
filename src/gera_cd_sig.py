@@ -9,7 +9,7 @@ diretorio = sys.argv[1]
 bins = int(round(float(sys.argv[2])))
 rmin = float(sys.argv[3])
 rmax = float(sys.argv[4])
-
+print "cd",bins,rmin,rmax
 f = open(diretorio+"classes.txt","r")
 cl = cPickle.load(f)
 f.close()

@@ -174,8 +174,11 @@ def dii(fn,raio):
   d = squareform(pdist(aux))
   return np.array([x[np.nonzero(x <= r)].sum() for x in d])
  
-def cd(fn):
-  img_c = contour_base(fn)
+def cd(fn,sigma=27.0):
+  if (sigma != 0):
+   img_c = contour(fn,sigma)
+  else:
+   img_c = contour_base(fn)
   # Calcula distância ao centróide
   dc = np.abs((img_c()-img_c().mean()))
   # m = maior distancia do contorno ao centroide
@@ -189,9 +192,12 @@ def cd(fn):
 # Angle sequence shape signature
 class angle_seq_signature:
 
- def __init__(self,fn,raio):
+ def __init__(self,fn,raio,sigma=27.0):
   r = raio
-  cont = contour_base(fn).c
+  if (sigma != 0):
+   cont = contour(fn,sigma).c
+  else:
+   cont = contour_base(fn).c
   N = cont.shape[0]
   low = cont[0:r].copy()
   high = cont[N-r:N].copy()

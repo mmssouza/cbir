@@ -8,3 +8,12 @@ def pdist2(X,dist_func):
     p[i,j] = dist_func(a,b)
  p = p + p.transpose()
  return p
+
+def pdist3(X,dist_func,idx):
+ N = X.shape[0]
+ p = scipy.zeros((N,N))
+ for i in idx:
+  for j in scipy.arange(i,N):
+    p[i,j] = dist_func(X[i,:],X[j,:])
+ return  p + p.transpose()
+

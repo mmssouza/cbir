@@ -11,7 +11,7 @@ area = float(sys.argv[2])
 bins = int(round(float(sys.argv[3])))
 rmin = float(sys.argv[4])
 rmax = float(sys.argv[5])
-print "aii",area,bins,rmin,rmax
+#print "aii",area,bins,rmin,rmax
 f = open(diretorio+"classes.txt","r")
 cl = cPickle.load(f)
 f.close()

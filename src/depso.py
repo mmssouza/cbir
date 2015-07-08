@@ -5,46 +5,86 @@ import scipy.spatial.distance
 
 class de:
 
- def __init__(self,fitness_func,npop = 10,pr = 0.7,beta = 5.0,debug=False):
+ def __init__(self,fitness_func,npop = 10,pr = 0.7,beta = 2.5,debug=False):
   self.ns = npop
   self.bmax = beta
   self.pr  = pr 
   self.debug = debug
-  self.pop = [self.gera_individuo() for i in scipy.arange(self.ns)]
   self.fitness_func = fitness_func
   self.fit = scipy.zeros((self.ns,1))
+  self.pop = []
   # avalia fitness de toda populacao
   for i in scipy.arange(self.ns):
-   self.fit[i],aux = self.avalia_aptidao(self.pop[i])
-   self.pop[i] = aux.copy()
+   self.fit[i],aux = self.avalia_aptidao(self.gera_individuo())
+   #print i,self.fit[i]
+   self.pop.append(aux.copy())
+  self.pop = scipy.array(self.pop)
  
  def gera_individuo(self):
    
    l = []
    #aii
-   l.append(0.1 + 0.85*rand()) # raio
-   l.append(5+500*rand()) # bins
-   l.append(0.2*rand()) # hist range min
-   l.append(1.0 - 0.3*rand()) # hist range max
+   l.append(0.1 + 0.85*rand()) # 0 raio
+   l.append(5+500*rand()) # 1 bins
+   l.append(0.2*rand()) # 2 hist range min
+   l.append(0.7 + 0.3*rand()) # 3 hist range max
    #curv
-   l.append(20+rand()*20) # sigma
-   l.append(5+500*rand()) # bins
+   l.append(20+rand()*20) # 4 sigma
+   l.append(5+500*rand()) # 5 bins
    a = rand(2)
-   l.append(-200-4000*a.min()) # hist range min
-   l.append(200+4000*a.max()) # hist range max
+   l.append(-200-4000*a.min()) # 6 hist range min
+   l.append(200+4000*a.max()) # 7 hist range max
    #angle
-   l.append(15+5*rand()) # raio
-   l.append(5+500*rand()) # bins
-   l.append(rand()) # hist range min
-   l.append(1.5 + (np.pi - 1.5)*rand()) # hist range max
+   l.append(5+45*rand()) # 8 raio
+   l.append(5+500*rand()) # 9 bins
+   l.append(0.2*rand()) # 10 hist range min
+   l.append(np.pi - 1.5*rand()) # 11 hist range max 
+   l.append(10+rand()*40) # 12 sigma
    #cd
-   l.append(5+500*rand()) # bins
-   l.append(0.15*rand()) # hist range min
-   l.append(0.25 + 0.75*rand()) # hist range max
+   l.append(5+500*rand()) # 13  bins
+   l.append(0.2*rand()) # 14 hist range min
+   l.append(0.7 + 0.3*rand()) # 15 hist range max
+   l.append(10+rand()*40) # 16 sigma
+
 
    return np.array(l) 
 
  def avalia_aptidao(self,x):
+  if not 0.1 <= x[0] <= 0.85: # 0 raio
+   x[0] = 0.1 + 0.85*rand() 
+  if not 5.0 <= x[1] <= 500.0: # 1 bins
+   x[1] = 5+500*rand() 
+  if not 0.0 <= x[2] <= 0.2: # 2 hist range min
+   x[2] = 0.2*rand()
+  if not 0.7 <= x[3] <= 1.0: # 3 hist range max
+   x[3] = 0.7 + 0.3*rand()
+  if not 20.0 <= x[4] <= 40.0: # 4 sigma
+   x[4] = 20+rand()*20
+  if not 5.0 <= x[5] <= 500.0: # 5 bins
+   x[5] = 5+500*rand()
+  if not -4200.0 <= x[6] <= -200.0: # 6 hist range min
+   x[6] = -200-4000*rand()
+  if not 200 <= x[7] <= 4200: # 7 hist range max
+   x[7] = 200+4000*rand()
+  if not 5. <= x[8] <= 50.: # 8 raio
+   x[8] = 5+45*rand()
+  if not 5.0 <= x[9] <= 500.0: # 9 bins
+   x[9] = 5+500*rand()  
+  if not 0.0 <= x[10] <= 0.2: # 10 hist range min
+   x[10] = 0.2*rand() 
+  if not 1.64 <= x[11]<= np.pi: # 11 hist range max
+   x[11] = np.pi - 1.5*rand()
+  if not 10.<=x[12]<=50.: # 12 sigma
+   x[12] = 10+rand()*40
+  if not 5.0 <= x[13] <= 500.0: # 13 bins 
+   x[13] = 5+500*rand()
+  if not 0.0 <= x[14] <= 0.2: # 14 hist range min
+   x[14] = 0.2*rand()
+  if not 0.7 <= x[15] <= 1.0: # 15 hist range max
+   x[15] = 0.7 + 0.3*rand()
+  if not 10.<=x[16]<=50.0:  # 16 sigma
+   x[16] = 10+rand()*40
+
   return (self.fitness_func(x),x)
    
  def individuo_valido(self,x):  
@@ -53,7 +93,7 @@ class de:
   return valido 
   
  def run(self):
-  prox_geracao = []
+  #prox_geracao = []
    
   for i in scipy.arange(self.ns):
    if self.debug: print "i = {0}".format(i)
@@ -77,21 +117,18 @@ class de:
    # trial vector a partir da mutacao de um alvo 
    u = self.pop[j[0]] + self.beta*(self.pop[j[1]] - self.pop[j[2]])
    if self.debug: print "u (target vector) = {0}".format(u)
+
+   # gera por crossover solucao candidata
+   c = self.pop[i].copy()  
    # seleciona indices para crossover
    # garantindo que ocorra crossover em
    # pelo menos uma vez
-   j = [random_integers(0,1)]
-   for k in scipy.arange(2):
-    if (scipy.rand() < self.pr) and (k != j[0]):
-     j.append(k)
+   j = random_integers(0,self.pop.shape[1]-1)
+  
+   for k in scipy.arange(self.pop.shape[1]):
+    if (scipy.rand() < self.pr) or (k == j):
+     c[k] = u[k]  
 
-   if self.debug: print "j (crossover) = {0}".format(j)
-
-   # gera por crossover solucao candidata
-   c = self.pop[i].copy()
-   for k in j:
-    c[k] = u[k]
-   
    c_fit,c = self.avalia_aptidao(c) 
 
    if self.debug: print "atual = {0}, fitness = {1}".format(self.pop[i],self.fit[i])
@@ -99,14 +136,12 @@ class de:
     
    # leva para proxima geracao quem tiver melhor fitness
    if c_fit > self.fit[i]:
-    prox_geracao.append(c)
-   else:
-    prox_geracao.append(self.pop[i])           
- 
-  self.pop = scipy.array(prox_geracao)
+    self.pop[i] = c
+    self.fit[i] = c_fit
+
   # avalia fitness da nova populacao
-  for i in scipy.arange(self.ns):
-   self.fit[i],self.pop[i] = self.avalia_aptidao(self.pop[i]) 
+#  for i in scipy.arange(self.ns):
+#   self.fit[i],self.pop[i] = self.avalia_aptidao(self.pop[i]) 
   
 class pso:
 

@@ -9,7 +9,8 @@ diretorio = sys.argv[1]
 bins = int(round(float(sys.argv[2])))
 rmin = float(sys.argv[3])
 rmax = float(sys.argv[4])
-print "cd",bins,rmin,rmax
+s = float(sys.argv[5])
+#print "cd",bins,rmin,rmax
 f = open(diretorio+"classes.txt","r")
 cl = cPickle.load(f)
 f.close()
@@ -17,10 +18,10 @@ f.close()
 db = {}
 
 for im_file in cl.keys():
-   tmp = descritores.cd(diretorio+im_file)
+   tmp = descritores.cd(diretorio+im_file,sigma = s)
    h = np.histogram(tmp,bins = 40,range = (0.1,1.))
    h = h[0].astype(float)/float(h[0].sum())
    db[im_file] = np.hstack((cl[im_file],h))
 #   print im_file,db[im_file]
    
-cPickle.dump(db,open(sys.argv[5],"a"))
+cPickle.dump(db,open(sys.argv[6],"a"))

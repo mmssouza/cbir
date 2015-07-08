@@ -4,23 +4,26 @@ import sys
 import cPickle
 import scipy
 # Jensen-shannon divergence
-#import jsd
+import jsd
 # Hellinger distance
 import hellinger as He
-#import Patrick_Fisher
+import Patrick_Fisher
 from multiprocessing import Queue,Process
-from pdist2 import pdist2
+from pdist2 import pdist3
 
 # Jensen-Shannon divergence
-#distancia = jsd.jsd
+distancia = jsd.jsd
 # Hellinger divergence
-distancia = He.He
+#distancia = He.He
 #distancia = Patrick_Fisher.Patrick_Fisher
 
 def worker(in_q,out_q):
-    X = in_q.get()
-    d = pdist2(X,distancia)
-    out_q.put(d)
+    args = in_q.get()
+    pid = args[0]
+    X = args[1]
+    idx = args[2]
+    d = pdist3(X,distancia,idx)
+    out_q.put([pid,d])
     return
 
 if __name__ == '__main__':
@@ -58,19 +61,26 @@ if __name__ == '__main__':
  in_q,out_q = Queue(),Queue()
 
  threads = []
- for i in range(4):
+ for i in range(8):
     t =  Process(target=worker,args=(in_q,out_q))
     threads.append(t)
 
  for p in threads:
   p.start()
- 
-# print "Calculando matriz de distancias"
- in_q.put(scipy.vstack(data[:,0]))
- in_q.put(scipy.vstack(data[:,1]))
- in_q.put(scipy.vstack(data[:,2]))
- in_q.put(scipy.vstack(data[:,3]))
 
+ idx_l = scipy.arange(0,Nobj,2)
+ idx_h = scipy.arange(1,Nobj+1,2) 
+# print "Calculando matriz de distancias"
+ in_q.put([0,scipy.vstack(data[:,0]),idx_l])
+ in_q.put([1,scipy.vstack(data[:,0]),idx_h])
+ in_q.put([2,scipy.vstack(data[:,1]),idx_l])
+ in_q.put([3,scipy.vstack(data[:,1]),idx_h])
+ in_q.put([4,scipy.vstack(data[:,2]),idx_l])
+ in_q.put([5,scipy.vstack(data[:,2]),idx_h])
+ in_q.put([6,scipy.vstack(data[:,3]),idx_l])
+ in_q.put([7,scipy.vstack(data[:,3]),idx_h])
+ 
+ 
 # pesos das caracteristicas para o cálculo da distância 
 # distancia : medida de dissimilaridade a ser empregada 
 #distancias = ['braycurtis','canberra','chebyshev','cityblock','correlation',
@@ -85,10 +95,21 @@ if __name__ == '__main__':
 # Aqui vai dormir e acordar quando tiver o resultado
 # de cada matriz de distancias 
 
- d1 = out_q.get()
- d2 = out_q.get()
- d3 = out_q.get()
- d4 = out_q.get()
+ l = [out_q.get() for i in scipy.arange(8)]
+ d1 = scipy.zeros((Nobj,Nobj))
+ d2 = scipy.zeros((Nobj,Nobj))
+ d3 = scipy.zeros((Nobj,Nobj))
+ d4 = scipy.zeros((Nobj,Nobj))
+
+ for a in l:
+  if a[0] in [0,1]:
+   d1 = d1 + a[1]
+  elif a[0] in [2,3]:
+   d2 = d2 + a[1]
+  elif a[0] in [4,5]:
+   d3 = d3 + a[1]
+  else:
+   d4 = d4 + a[1]
  
  w1,w2,w3,w4 = (0.25,0.25,0.25,0.25)
 

@@ -6,16 +6,19 @@ import scipy
 # Jensen-shannon divergence
 import jsd
 # Hellinger distance
+# Distancia chi square
+import chi_square
 import hellinger as He
 import Patrick_Fisher
 from multiprocessing import Queue,Process
 from pdist2 import pdist3
 
 # Jensen-Shannon divergence
-distancia = jsd.jsd
+#distancia = jsd.jsd
 # Hellinger divergence
-#distancia = He.He
+distancia = He.He
 #distancia = Patrick_Fisher.Patrick_Fisher
+#distancia = chi_square.chi_square
 
 def worker(in_q,out_q):
     args = in_q.get()
@@ -111,9 +114,11 @@ if __name__ == '__main__':
   else:
    d4 = d4 + a[1]
  
- w1,w2,w3,w4 = (0.25,0.25,0.25,0.25)
+# w1,w2,w3,w4 = (0.25,0.25,0.25,0.25)
 
- md = w1*d1 + w2*d2 + w3*d3 + w4*d4
+# md = w1*d1 + w2*d2 + w3*d3 + w4*d4
+# md = scipy.sqrt(d1) + scipy.sqrt(d2) + scipy.sqrt(d3) + scipy.sqrt(d4)
+ md = d1**2 + d2**2 + d3**2 + d4**2
 
 # Acumulador para contabilizar desempenho do experimento
  tt = 0

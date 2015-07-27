@@ -29,11 +29,11 @@ class de:
    l.append(0.2*rand()) # 2 hist range min
    l.append(0.7 + 0.3*rand()) # 3 hist range max
    #curv
-   l.append(20+rand()*20) # 4 sigma
+   l.append(6+rand()*50) # 4 sigma
    l.append(5+500*rand()) # 5 bins
    a = rand(2)
-   l.append(-200-4000*a.min()) # 6 hist range min
-   l.append(200+4000*a.max()) # 7 hist range max
+   l.append(-200-6000*a.min()) # 6 hist range min
+   l.append(200+6000*a.max()) # 7 hist range max
    #angle
    l.append(5+45*rand()) # 8 raio
    l.append(5+500*rand()) # 9 bins
@@ -58,14 +58,14 @@ class de:
    x[2] = 0.2*rand()
   if not 0.7 <= x[3] <= 1.0: # 3 hist range max
    x[3] = 0.7 + 0.3*rand()
-  if not 20.0 <= x[4] <= 40.0: # 4 sigma
-   x[4] = 20+rand()*20
+  if not 6.0 <= x[4] <= 56.0: # 4 sigma
+   x[4] = 6+rand()*50
   if not 5.0 <= x[5] <= 500.0: # 5 bins
    x[5] = 5+500*rand()
-  if not -4200.0 <= x[6] <= -200.0: # 6 hist range min
-   x[6] = -200-4000*rand()
-  if not 200 <= x[7] <= 4200: # 7 hist range max
-   x[7] = 200+4000*rand()
+  if not -6200.0 <= x[6] <= -200.0: # 6 hist range min
+   x[6] = -200-6000*rand()
+  if not 200 <= x[7] <= 6200: # 7 hist range max
+   x[7] = 200+6000*rand()
   if not 5. <= x[8] <= 50.: # 8 raio
    x[8] = 5+45*rand()
   if not 5.0 <= x[9] <= 500.0: # 9 bins

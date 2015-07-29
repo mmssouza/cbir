@@ -1,22 +1,12 @@
 #!/usr/bin/python
 
-import sys
 import cPickle
 import numpy as np
+import tempfile
 import aii
 from multiprocessing import Queue,Process
 
-diretorio = sys.argv[1]
-area = float(sys.argv[2])
-bins = int(round(float(sys.argv[3])))
-rmin = float(sys.argv[4])
-rmax = float(sys.argv[5])
-#print "aii",area,bins,rmin,rmax
-f = open(diretorio+"classes.txt","r")
-cl = cPickle.load(f)
-f.close()
-
-def worker(in_q,out_q):
+def worker(diretorio,area,bins,rmin,rmax,cl,in_q,out_q):
   f_list = in_q.get()
   d = {}
   for im_file in f_list:
@@ -26,35 +16,46 @@ def worker(in_q,out_q):
    d[im_file] = np.hstack((cl[im_file],h))
   out_q.put(d)
 
-in_q,out_q = Queue(),Queue()
 
-threads = []
-for i in range(7):
-  t =  Process(target=worker,args=(in_q,out_q))
+def gera_aii_sig_mt(diretorio,args,cl):
+
+ area = args[0]
+ bins = int(round(args[1]))
+ rmin = args[2]
+ rmax = args[3]
+
+ in_q,out_q = Queue(),Queue()
+
+ threads = []
+ for i in range(7):
+  t =  Process(target=worker,args=(diretorio,area,bins,rmin,rmax,cl,in_q,out_q))
   threads.append(t)
 
-for p in threads:
- p.start()
+ for p in threads:
+  p.start()
  
-in_q.put(cl.keys()[0:200])
-in_q.put(cl.keys()[200:400])
-in_q.put(cl.keys()[400:600])
-in_q.put(cl.keys()[600:800])
-in_q.put(cl.keys()[800:1000])
-in_q.put(cl.keys()[1000:1200])
-in_q.put(cl.keys()[1200:1400])
+ in_q.put(cl.keys()[0:200])
+ in_q.put(cl.keys()[200:400])
+ in_q.put(cl.keys()[400:600])
+ in_q.put(cl.keys()[600:800])
+ in_q.put(cl.keys()[800:1000])
+ in_q.put(cl.keys()[1000:1200])
+ in_q.put(cl.keys()[1200:1400])
 
-d = []
-d.append(out_q.get())
-d.append(out_q.get())
-d.append(out_q.get())
-d.append(out_q.get())
-d.append(out_q.get())
-d.append(out_q.get())
-d.append(out_q.get())
+ d = []
+ d.append(out_q.get())
+ d.append(out_q.get())
+ d.append(out_q.get())
+ d.append(out_q.get())
+ d.append(out_q.get())
+ d.append(out_q.get())
+ d.append(out_q.get())
 
-dall = {}
-for i in d:
- dall.update(i)
+ dall = {}
+ for i in d:
+  dall.update(i)
  
-cPickle.dump(dall,open(sys.argv[6],"a"))
+ tmp0 = tempfile.NamedTemporaryFile(suffix ='.pkl',dir='/tmp',delete = False)
+ cPickle.dump(dall,tmp0)
+
+ return tmp0.name

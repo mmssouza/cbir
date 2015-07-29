@@ -1,27 +1,25 @@
 #!/usr/bin/python
 
-import sys
 import numpy as np
+import tempfile
 import cPickle
 import descritores
 
-diretorio = sys.argv[1]
-bins = int(round(float(sys.argv[2])))
-rmin = float(sys.argv[3])
-rmax = float(sys.argv[4])
-s = float(sys.argv[5])
-#print "cd",bins,rmin,rmax
-f = open(diretorio+"classes.txt","r")
-cl = cPickle.load(f)
-f.close()
+def gera_cd_sig(diretorio,args,cl):
+ bins = int(round(args[0]))
+ rmin = args[1]
+ rmax = args[2]
+ s = args[3]
+ 
+ db = {}
 
-db = {}
-
-for im_file in cl.keys():
+ for im_file in cl.keys():
    tmp = descritores.cd(diretorio+im_file,sigma = s)
    h = np.histogram(tmp,bins = 40,range = (0.1,1.))
    h = h[0].astype(float)/float(h[0].sum())
    db[im_file] = np.hstack((cl[im_file],h))
 #   print im_file,db[im_file]
-   
-cPickle.dump(db,open(sys.argv[6],"a"))
+ tmp0 = tempfile.NamedTemporaryFile(suffix ='.pkl',dir='/tmp',delete = False)     
+ cPickle.dump(db,tmp0)
+ return tmp0.name
+

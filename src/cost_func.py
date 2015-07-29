@@ -1,45 +1,63 @@
 #!/usr/bin/python
 
-import subprocess
-import shlex
-import tempfile
+import cPickle
 import os
-import cStringIO
 import numpy as np
+from gera_aii_sig_mt import gera_aii_sig_mt
+from gera_angle_sig import gera_angle_sig 
+from gera_cd_sig import gera_cd_sig
+from gera_curvatura_sig import gera_curvatura_sig
+from rank40_mt import rank40_mt
+from multiprocessing import Queue,Process
+
+diretorio = '../../1400_mpeg7_Preprocessadas/'
+
+def worker(in_q,out_q):
+  args = in_q.get()
+  f = args[0]
+  cl = args[2]
+  out_q.put(f(diretorio,args[1],cl))
+
 
 def cost_func(args):
-
- args = shlex.split(str(args.tolist()).lstrip('[').rstrip(']'))
- args = [a.strip(',') for a in args]
 
  aii_args = args[0:4]
  curv_args = args[4:8]
  angle_args = args[8:13]
  cd_args = args[13:17]
+ with open(diretorio+"classes.txt","r") as f:
+  cl = cPickle.load(f)
 
- tmp0 = tempfile.NamedTemporaryFile(suffix ='.pkl',dir='/tmp',delete = False)
- tmp1 = tempfile.NamedTemporaryFile(suffix ='.pkl',dir='/tmp',delete = False)
- tmp2 = tempfile.NamedTemporaryFile(suffix ='.pkl',dir='/tmp',delete = False)
- tmp3 = tempfile.NamedTemporaryFile(suffix ='.pkl',dir='/tmp',delete = False)
+ in_q,out_q = Queue(),Queue()
+
 # print "passo 1 - Extracao caracteristicas"
- p_aii = subprocess.Popen(['./gera_aii_sig_mt.py','../../1400_mpeg7_Preprocessadas/']+aii_args+[tmp0.name])
- p_curv = subprocess.Popen(['./gera_curvatura_sig.py','../../1400_mpeg7_Preprocessadas/']+curv_args+[tmp1.name])
- p_angle = subprocess.Popen(['./gera_angle_sig.py','../../1400_mpeg7_Preprocessadas/']+angle_args+[tmp2.name])
- p_cd = subprocess.Popen(['./gera_cd_sig.py','../../1400_mpeg7_Preprocessadas/']+cd_args+[tmp3.name])
+ 
+ threads = []
+ for i in range(4):
+  t =  Process(target=worker,args=(in_q,out_q))
+  threads.append(t)
 
- p_cd.wait()
- p_angle.wait()
- p_curv.wait()
- p_aii.wait()
-  
+ for p in threads:
+  p.start()
+ 
+ in_q.put([gera_aii_sig_mt,aii_args,cl])
+ in_q.put([gera_angle_sig,angle_args,cl])
+ in_q.put([gera_cd_sig,cd_args,cl])
+ in_q.put([gera_curvatura_sig,curv_args,cl])
+
+ tmp0 = out_q.get()
+ tmp1 = out_q.get()
+ tmp2 = out_q.get()
+ tmp3 = out_q.get()
+ 
 # print "passo 2 - Bull eye"
- out = cStringIO.StringIO(); 
- res = subprocess.check_output(['./rank40_mt.py',tmp0.name,tmp1.name,tmp2.name,tmp3.name])
- os.remove(tmp0.name)
- os.remove(tmp1.name)
- os.remove(tmp2.name)
- os.remove(tmp3.name)
-# print res
- return float(res)
+ res = rank40_mt(tmp0,tmp1,tmp2,tmp3)
+
+ os.remove(tmp0)
+ os.remove(tmp1)
+ os.remove(tmp2)
+ os.remove(tmp3)
+
+ return res
 
 

@@ -1,6 +1,5 @@
 #!/usr/bin/python
 # -*- coding: iso-8859-1 -*-
-import sys
 import cPickle
 import scipy
 # Jensen-shannon divergence
@@ -29,23 +28,23 @@ def worker(in_q,out_q):
     out_q.put([pid,d])
     return
 
-if __name__ == '__main__':
+def rank40_mt(tmp0,tmp1,tmp2,tmp3):
 
 # print "abrindo databases"
 # databases
 # Curvaturas
 # print sys.argv[1]
- db1 = cPickle.load(open(sys.argv[1]))
+ db1 = cPickle.load(open(tmp0,'r'))
 # Angle sequence signature
 # print sys.argv[2]
- db2 = cPickle.load(open(sys.argv[2]))
+ db2 = cPickle.load(open(tmp1,'r'))
 # Centroid distance
 # print sys.argv[3]
- db3 = cPickle.load(open(sys.argv[3]))
+ db3 = cPickle.load(open(tmp2,'r'))
 
 # Area integral invariant
 # print sys.argv[4]
- db4 = cPickle.load(open(sys.argv[4]))
+ db4 = cPickle.load(open(tmp3,'r'))
 
 # nome das figuras
  name_arr = scipy.array(db1.keys())
@@ -145,5 +144,5 @@ if __name__ == '__main__':
   tt = tt + tp
     
 # Bull eye
- print tt/float(1400*20)  
+ return tt/float(1400*20)  
 

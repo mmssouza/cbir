@@ -158,49 +158,27 @@ class pso:
   self.fit = scipy.zeros(self.ns)
   # avalia fitness de toda populacao
   for i in scipy.arange(self.ns):
-   self.fit[i],aux = self.avalia_aptidao(self.pop[i])
-   self.pop[i] = aux.copy()
-  
+   self.fit[i],self.pop[i] = self.avalia_aptidao(self.pop[i])  
+   
   # inicializa velocidades iniciais
-  self.v = scipy.zeros(self.pop.shape)
+  self.v = scipy.array([self.gera_individuo() for i in scipy.arange(self.ns)])
   # guarda a melhor posicao de cada particula 
   self.bfp = scipy.copy(self.pop)
   self.bfp_fitness = scipy.copy(self.fit)
   # guarda a melhor posicao global
-  self.bfg = self.pop[self.bfp_fitness.argmax()]
- 
+  self.bfg = self.pop[self.bfp_fitness.argmin()]
+  self.bfg_fitness = self.bfp_fitness.min()
+
  def gera_individuo(self):
-   return x
+   return np.array([125*rand()+0.25 for i in range(DIM)])
 
  def avalia_aptidao(self,x): 
-   fit = self.fitness_func(label_pred,self.X)
-   return (fit,x)
- 
- def individuo_valido(self,x):  
-  valido = False
-  return valido 
+  for i in range(DIM):
+   if not 0.25 <= x[i] <= 125.25:
+    x[i] = 125*rand()+0.25
+  return (self.fitness_func(x),x)
  
  def run(self):
-  # Para cada particula 
-  for i in scipy.arange(self.ns):
-   # atualiza melhor posicao da particula
-   self.fit[i],aux = self.avalia_aptidao(self.pop[i])
-   self.pop[i] = aux.copy()
-   # atualiza melhor posicao da particula
-   self.bfp_fitness[i],aux = self.avalia_aptidao(self.bfp[i])
-   self.bfp[i] = aux.copy()
-   if self.debug:
-    print "self.fit[{0}] = {1} bfp_fitness = {2}".format(i,self.fit[i],self.bfp_fitness[i])
-   if self.bfp_fitness[i] < self.fit[i]:
-    self.bfp[i] = self.pop[i].copy()
-    self.bfp_fitness[i] = self.fit[i].copy()
-  
-  # Atualiza melhor posicao global
-  idx = self.bfp_fitness.argmax()
-  curr_best_global_fitness = self.bfp_fitness[idx]
-  curr_best_global = self.bfp[idx].copy()
-  if curr_best_global_fitness > self.bfp_fitness.max():
-    self.bfg = curr_best_global
  
   for i in scipy.arange(self.ns):
    # Atualiza velocidade
@@ -210,8 +188,16 @@ class pso:
    # Atualiza posicao
    self.pop[i] = self.pop[i] + self.v[i]
    
-  # calcula fitness 
-   self.fit[i],aux = self.avalia_aptidao(self.pop[i])
-   self.pop[i] = aux.copy()
+   self.fit[i],self.pop[i] = self.avalia_aptidao(self.pop[i])
+   # Atualiza melhor posicao da particula
+   if self.fit[i] < self.bfp_fitness[i]:
+    self.bfp[i] = self.pop[i]
+    self.bfp_fitness[i] = self.fit[i]
+   if self.debug:
+    print "self.fit[{0}] = {1} bfp_fitness = {2}".format(i,self.fit[i],self.bfp_fitness[i])
+  # Atualiza melhor posicao global
+   if  self.bfp_fitness[i] < self.bfg_fitness:
+    self.bfg_fitness = self.bfp_fitness[i]
+    self.bfg = self.bfp[i]
    
     

@@ -117,8 +117,8 @@ def rank40_mt(tmp0,tmp1,tmp2,tmp3):
 
 # md = w1*d1 + w2*d2 + w3*d3 + w4*d4
 # md = scipy.sqrt(d1) + scipy.sqrt(d2) + scipy.sqrt(d3) + scipy.sqrt(d4)
- md = d1**2 + d2**2 + d3**2 + d4**2
-
+# md = d1**2 + d2**2 + d3**2 + d4**2
+ md = (d1*d2*d3*d4)**0.25
 # Acumulador para contabilizar desempenho do experimento
  tt = 0
 

@@ -1,7 +1,5 @@
-import pylab
 import scipy
 import cv2
-import matplotlib.pyplot as plt
 
 def AreaIntegralInvariant2(name,q,bg = 1):
  im = cv2.imread(name,0)

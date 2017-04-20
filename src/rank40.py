@@ -3,12 +3,14 @@
 import sys
 import cPickle
 import scipy
-import numpy as np
 # Jensen-shannon divergence
 #import jsd
 # Hellinger distance
 import hellinger as He
-
+# Patrick Fisher
+#import Patrick_Fisher as pf
+#import chi_square
+#import dkl
 # Calcula matriz de distâncias
 # Recebe como parâmetro as assinaturas
 # e uma função para o cálculo de distâncias
@@ -27,7 +29,8 @@ def pdist(X,dist_func):
     # Area integral invariant
     d4 = dist_func(a[3],b[3])
     # distância da forma i para a forma j
-    p[i,j] = d1+d2+d3+d4
+    #p[i,j] = d1+d2+d3+d4
+    p[i,j] = 0.45*d1+0.45*d2+0.1*d3
  p = p + p.transpose()
  return p
 
@@ -61,7 +64,7 @@ data = scipy.array([[db1[n][1:],db2[n][1:],db3[n][1:],db4[n][1:]] for n in name_
 #              'sokalsneath','sqeuclidean','yule']
 
 # Jensen-Shannon divergence
-#distancia = jsd.jsd
+#distancia = dkl.D_KL
 # Hellinger divergence
 distancia = He.He
 
@@ -69,7 +72,7 @@ distancia = He.He
 Nobj = data.shape[0]
 
 # Numero de recuperacoes para o cálculo do Bull eye
-Nretr = 40
+Nretr = 10
 
 # Acumulador para contabilizar desempenho do experimento
 tt = 0
@@ -100,5 +103,5 @@ for i,nome in zip(scipy.arange(Nobj),name_arr):
   tt = tt + tp
     
 # Bull eye
-print 100*tt/float(1400*20)  
+print 100*tt/float(160*5)  
 

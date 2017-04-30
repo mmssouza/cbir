@@ -3,14 +3,12 @@
 import sys
 import cPickle
 import scipy
-# Jensen-shannon divergence
-#import jsd
-# Hellinger distance
+import jsd
 import hellinger as He
-# Patrick Fisher
-#import Patrick_Fisher as pf
-#import chi_square
-#import dkl
+import Patrick_Fisher as pf
+import chi_square
+import dkl
+
 # Calcula matriz de distâncias
 # Recebe como parâmetro as assinaturas
 # e uma função para o cálculo de distâncias
@@ -27,9 +25,7 @@ def pdist(X,dist_func):
     # Centroid distance
     d3 = dist_func(a[2],b[2])
     # Area integral invariant
-    d4 = dist_func(a[3],b[3])
-    # distância da forma i para a forma j
-    #p[i,j] = d1+d2+d3+d4
+
     p[i,j] = 0.45*d1+0.45*d2+0.1*d3
  p = p + p.transpose()
  return p
@@ -42,8 +38,6 @@ db1 = cPickle.load(open(sys.argv[1]))
 db2 = cPickle.load(open(sys.argv[2]))
 # Centroid distance
 db3 = cPickle.load(open(sys.argv[3]))
-# Area integral invariant
-db4 = cPickle.load(open(sys.argv[4]))
 
 # nome das figuras
 name_arr = scipy.array(db1.keys())
@@ -54,24 +48,36 @@ cl = dict(zip(name_arr,[db1[n][0] for n in name_arr]))
 print "gerando base de histogramas"
 # vetores de caracteristicas e classes
 #data = scipy.array([scipy.fromstring(db[nome],sep=' ')[0:70] for nome in name_arr])
-data = scipy.array([[db1[n][1:],db2[n][1:],db3[n][1:],db4[n][1:]] for n in name_arr])
+data = scipy.array([[db1[n][1:],db2[n][1:],db3[n][1:]] for n in name_arr])
 
-# distancia : medida de dissimilaridade a ser empregada 
-#distancias = ['braycurtis','canberra','chebyshev','cityblock','correlation',
-#              'cosine','dice','euclidean','hamming','jaccard',
-#              'kulsinski','mahalanobis','matching','minkowski',
-#              'rogerstanimoto','russelrao','seuclidean','sokalmichener',
-#              'sokalsneath','sqeuclidean','yule']
+
+##################################################
+# TEM DE ESPECIFICAR AQUI QUAL DISTANCIA UTILIZAR
+#####################################3############
 
 # Jensen-Shannon divergence
+#distancia = jsd.jsd
+
+# Chi square
+#distancia = chi_square.chi_square
+
+# Kullback Leiben
 #distancia = dkl.D_KL
+
+# Patrick Fisher
+#distancia = pf.Patrick_Fisher
+
 # Hellinger divergence
 distancia = He.He
 
-# Numero de amostras
+##########################################
+# Numero de amostras da base
+##########################################
 Nobj = data.shape[0]
 
-# Numero de recuperacoes para o cálculo do Bull eye
+###################################################################
+# Numero de recuperacoes (o dobro to total de amostras por classe)
+###################################################################
 Nretr = 10
 
 # Acumulador para contabilizar desempenho do experimento
@@ -103,5 +109,5 @@ for i,nome in zip(scipy.arange(Nobj),name_arr):
   tt = tt + tp
     
 # Bull eye
-print 100*tt/float(160*5)  
+print 100*tt/float(Nobj*5)  
 

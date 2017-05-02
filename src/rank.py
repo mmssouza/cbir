@@ -1,7 +1,6 @@
 #!/usr/bin/python
 # -*- coding: iso-8859-1 -*-
 import sys
-import cStringIO
 #import math
 import cPickle
 import numpy as np
@@ -75,45 +74,25 @@ Nac = Nobj/Nclasses
 # Numero de recuperacoes
 Nretr = Nac
 
-# Buffer para saida dos resultados
-ots = cStringIO.StringIO() 
-
 # Calcula matriz de distancias 
 md = pdist(data,distancia)
-l = []
+# Para contabilizar a Matriz de confusão
+l = scipy.zeros((Nclasses,Nac),dtype = int)
+
 for i,nome in zip(scipy.arange(Nobj),name_arr):
 # Para cada linha de md estabelece rank de recuperacao
 # O primeiro elemento de cada linha corresponde a forma modelo
 # Obtem a classe dos objetos recuperados pelo ordem crescente de distancia
- idx = scipy.argsort(md[i])
+  idx = scipy.argsort(md[i])
  # pega classes a qual pertencem o primeiro padrao e as imagens recuperadas
- classe_padrao = cl[nome]
- name_retr = name_arr[idx] 
- aux = [cl[j] for j in name_retr]
- #output.write(classe_padrao)
+  classe_padrao = cl[nome]
+  name_retr = name_arr[idx] 
+  aux = scipy.array([cl[j] for j in name_retr])
  # estamos interessados apenas nos Nretr subsequentes resultados
- classe_retrs = aux[1:Nretr]
- n = scipy.nonzero(scipy.array(classe_retrs) == classe_padrao)
- tp = float(n[0].size)/float(scipy.array(classe_retrs).size)
- # Avalia e despeja resultados na saida
- l.append(scipy.array([classe_padrao,tp]))
- ots.write("{0} ".format(classe_padrao))
- for f in name_retr[0:11]:
-  ots.write("{0} ".format(f))
- #ots.write(" {0}\n\n".format(tp))
- ots.write("\n")
+  classe_retrs = aux[0:Nretr]
+  n = scipy.nonzero(classe_retrs == classe_padrao)
+ # Contabiliza resultados
+  for i in n[0]:
+   l[classe_padrao-1,i] = l[classe_padrao-1,i] + 1 
 
-l = scipy.array(l)
-
-for c in scipy.arange(1,Nclasses+1):
- idx = scipy.nonzero(l[:,0] == c)
- print idx
- m = l[idx,1].mean()
- s = l[idx,1].std()
- ots.write("{0} {1} {2}\n".format(c,m,s))
-
-ots.write("\n{0} {1}\n".format(scipy.mean(l[:,1]),scipy.std(l[:,1])))  
-
-print ots.getvalue()  
-
-ots.close()
+print(l.sum(axis = 0))

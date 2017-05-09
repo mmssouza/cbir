@@ -2,7 +2,6 @@
 import sys
 import os
 import scipy
-import cPickle
 import math
 import numpy as np
 from numpy.random import seed,random_integers,rand,permutation
@@ -64,16 +63,16 @@ class sim_ann:
     self.nS = self.nS + 1
    i = i + 1
    if (i > self.P) or (self.nS > self.L):
-	k = 0
-	if self.nS > 0:
-	 while (self.fit > self.hall_of_fame[k][0]):
-	  k = k + 1
-	  if k == 5:
-	   break
-	 if k < 5:
-	  self.hall_of_fame.insert(k,scipy.hstack((self.fit,self.s)))
-	  self.hall_of_fame.pop()   
-	break
+    k=0
+    if self.nS > 0:
+     while (self.fit > self.hall_of_fame[k][0]):
+      k = k + 1
+      if k == 5:
+       break
+     if k < 5:
+      self.hall_of_fame.insert(k,scipy.hstack((self.fit,self.s)))
+      self.hall_of_fame.pop()   
+    break
   self.T = self.alpha*self.T
   
 class coevol:
@@ -92,16 +91,16 @@ class coevol:
   de_best = self.p1.pop[self.p1.fit.argmin()] 
   for i in scipy.arange(5):
     self.hall_of_fame1.insert(0,scipy.hstack((self.ff(de_best),de_best)))
-	
-  #self.hall_of_fame2 = []	
-  #de_best = self.p2.pop[self.p2.fit.argmin()] 	
+    
+  #self.hall_of_fame2 = []  
+  #de_best = self.p2.pop[self.p2.fit.argmin()]  
   #for i in scipy.arange(5):
   #  self.hall_of_fame2.insert(0,scipy.hstack((self.ff(de_best),de_best)))
-	
+    
   self.hall_of_fame2 = []
   pso_best = self.p2.pop[self.p2.fit.argmin()]
   for i in scipy.arange(5):
-	self.hall_of_fame2.insert(0,scipy.hstack((self.ff(pso_best),pso_best)))
+    self.hall_of_fame2.insert(0,scipy.hstack((self.ff(pso_best),pso_best)))
   
  def f(self,x,pop,hf,ff):
   #if (x > 5.).any() or (x < -5.).any():
@@ -146,7 +145,7 @@ class coevol:
   self.p2.run()
   #best = self.p2.pop[self.p2.fit.argmin()]
   #self.HF_Updt(self.hall_of_fame2,self.ff(best),best)
-  self.HF_Updt(self.hall_of_fame2,self.ff(self.p2.bfg),self.p2.bfg)  	   
+  self.HF_Updt(self.hall_of_fame2,self.ff(self.p2.bfg),self.p2.bfg)        
 
 class de:
 
@@ -266,15 +265,15 @@ class pso:
    self.fit[i] = self.ff(self.pop[i])
    # Atualiza melhor posicao da particula
    if self.fit[i] > self.bfp_fitness[i]:
-	self.bfp[i] = self.pop[i].copy()
-	self.bfp_fitness[i] = self.fit[i]
-	# Atualiza melhor posicao global
-	if  self.bfp_fitness[i] > self.bfg_fitness:
-		self.bfg_fitness = self.bfp_fitness[i].copy()
-		self.bfg = self.bfp[i].copy()
+    self.bfp[i] = self.pop[i].copy()
+    self.bfp_fitness[i] = self.fit[i]
+    # Atualiza melhor posicao global
+    if  self.bfp_fitness[i] > self.bfg_fitness:
+        self.bfg_fitness = self.bfp_fitness[i].copy()
+        self.bfg = self.bfp[i].copy()
   self.vmax = self.vmax*self.alpha   
-  		
-		
+        
+        
 #############################
 ## Some Benchmark functions #
 #############################

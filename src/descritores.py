@@ -208,10 +208,10 @@ class angle_seq_signature:
    self.cont = contour_base(fn).c
   self.N = self.cont.shape[0]
   aux = np.zeros((self.N,))
-  for i in range(1,self.N/8):
+  for i in range(1,round(self.N/8)):
    aux = aux + self.angle_seq(i);
    
-  self.sig = aux/(self.N/8)
+  self.sig = aux/round(self.N/8)
   self.sig = self.sig/self.sig.max()
   
  def angle_seq(self,r):
@@ -250,7 +250,7 @@ class TAS:
  def __init__(self,fn):
   cont = contour_base(fn).c
   self.N = cont.shape[0]
-  print fn,self.N
+  print(fn,self.N)
   Ts = int(np.floor((self.N-1)/2))
   t = []
   for ts in np.arange(1,Ts):

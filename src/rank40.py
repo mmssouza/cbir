@@ -1,7 +1,7 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 # -*- coding: iso-8859-1 -*-
 import sys
-import cPickle
+import pickle
 import scipy
 import jsd
 import hellinger as He
@@ -24,7 +24,7 @@ def pdist(X,dist_func):
     d2 = dist_func(a[1],b[1])
     # Centroid distance
     d3 = dist_func(a[2],b[2])
-    # Area integral invariant
+    # Area integral invariant,fix_imports = True,encoding='iso-8859-1'
 
     p[i,j] = w1*d1+w2*d2+w3*d3
  p = p + p.transpose()
@@ -33,11 +33,11 @@ def pdist(X,dist_func):
 #print "abrindo databases"
 # databases
 # Curvaturas
-db1 = cPickle.load(open(sys.argv[1]))
+db1 = pickle.load(open(sys.argv[1],"rb"))
 # Angle sequence signature
-db2 = cPickle.load(open(sys.argv[2]))
+db2 = pickle.load(open(sys.argv[2],"rb"))
 # Centroid distance
-db3 = cPickle.load(open(sys.argv[3]))
+db3 = pickle.load(open(sys.argv[3],"rb"))
 
 w1 = float(sys.argv[4])
 
@@ -46,10 +46,9 @@ w2 = float(sys.argv[5])
 w3 = float(sys.argv[6])
 
 # nome das figuras
-name_arr = scipy.array(db1.keys())
-
+name_arr = scipy.array([i for i in iter(db1.keys())])
 # dicionario nome das figuras - classes
-cl = dict(zip(name_arr,[db1[n][0] for n in name_arr]))
+cl = dict(zip(name_arr.tolist(),[db1[n][0] for n in iter(db1.keys())]))
 
 #print "gerando base de histogramas"
 # vetores de caracteristicas e classes
@@ -115,5 +114,5 @@ for i,nome in zip(scipy.arange(Nobj),name_arr):
   tt = tt + tp
     
 # Bull eye
-print 100*tt/float(Nobj*5)  
+print(100*tt/float(Nobj*5))  
 

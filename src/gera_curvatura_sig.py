@@ -1,8 +1,8 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 
 import sys
 import numpy as np
-import cPickle
+import pickle
 import descritores as desc
 
 diretorio = sys.argv[1]
@@ -11,8 +11,8 @@ bins = int(round(float(sys.argv[3])))
 rmin = float(sys.argv[4])
 rmax = float(sys.argv[5])
 #print "curv",sigma,bins,rmin,rmax
-cl = cPickle.load(open(diretorio+"classes.txt","r"))
-fnames = cPickle.load(open(diretorio+"names.pkl","r"))
+cl = pickle.load(open(diretorio+"classes.txt","rb"))
+fnames = pickle.load(open(diretorio+"names.pkl","rb"))
 db = {}
 
 for im_file in fnames:
@@ -22,4 +22,4 @@ for im_file in fnames:
    db[im_file] = np.hstack((cl[im_file],h))
 #   print im_file,db[im_file]
    
-cPickle.dump(db,open(sys.argv[6],"w"))
+pickle.dump(db,open(sys.argv[6],"wb"))

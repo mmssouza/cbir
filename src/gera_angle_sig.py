@@ -1,8 +1,8 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 
 import sys
 import numpy as np
-import cPickle
+import pickle
 import descritores
 
 diretorio = sys.argv[1]
@@ -16,8 +16,8 @@ rmax = 1.0
 #rmax = np.pi
 s = float(sys.argv[3])
 #print "angle",raio,bins,rmin,rmax
-cl = cPickle.load(open(diretorio+"classes.txt","r"))
-fnames = cPickle.load(open(diretorio+"names.pkl","r"))
+cl = pickle.load(open(diretorio+"classes.txt","rb"))
+fnames = pickle.load(open(diretorio+"names.pkl","rb"))
 db = {}
 
 for im_file in fnames:
@@ -26,4 +26,4 @@ for im_file in fnames:
    h = h[0].astype(float)/float(h[0].sum())
    db[im_file] = np.hstack((cl[im_file],h))
    
-cPickle.dump(db,open(sys.argv[4],"w"))
+pickle.dump(db,open(sys.argv[4],"wb"))

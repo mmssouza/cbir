@@ -7,9 +7,12 @@ import descritores
 
 diretorio = sys.argv[1]
 bins = int(round(float(sys.argv[2])))
-rmin = float(sys.argv[3])
-rmax = float(sys.argv[4])
-s = float(sys.argv[5])
+#rmin = float(sys.argv[3])
+#rmax = float(sys.argv[4])
+
+rmin = 0
+rmax = 1.0
+s = float(sys.argv[3])
 #print "cd",bins,rmin,rmax
 
 cl = cPickle.load(open(diretorio+"classes.txt","r"))
@@ -23,4 +26,4 @@ for im_file in fnames:
    h = h[0].astype(float)/float(h[0].sum())
    db[im_file] = np.hstack((cl[im_file],h))
    
-cPickle.dump(db,open(sys.argv[6],"w"))
+cPickle.dump(db,open(sys.argv[4],"w"))

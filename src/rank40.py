@@ -26,11 +26,11 @@ def pdist(X,dist_func):
     d3 = dist_func(a[2],b[2])
     # Area integral invariant
 
-    p[i,j] = 0.45*d1+0.45*d2+0.1*d3
+    p[i,j] = w1*d1+w2*d2+w3*d3
  p = p + p.transpose()
  return p
 
-print "abrindo databases"
+#print "abrindo databases"
 # databases
 # Curvaturas
 db1 = cPickle.load(open(sys.argv[1]))
@@ -39,13 +39,19 @@ db2 = cPickle.load(open(sys.argv[2]))
 # Centroid distance
 db3 = cPickle.load(open(sys.argv[3]))
 
+w1 = float(sys.argv[4])
+
+w2 = float(sys.argv[5])
+
+w3 = float(sys.argv[6])
+
 # nome das figuras
 name_arr = scipy.array(db1.keys())
 
 # dicionario nome das figuras - classes
 cl = dict(zip(name_arr,[db1[n][0] for n in name_arr]))
 
-print "gerando base de histogramas"
+#print "gerando base de histogramas"
 # vetores de caracteristicas e classes
 #data = scipy.array([scipy.fromstring(db[nome],sep=' ')[0:70] for nome in name_arr])
 data = scipy.array([[db1[n][1:],db2[n][1:],db3[n][1:]] for n in name_arr])
@@ -84,10 +90,10 @@ Nretr = 10
 tt = 0
 
 # Calcula matriz de distancias 
-print "Calculando matriz de distancias"
+#print "Calculando matriz de distancias"
 md = pdist(data,distancia)
 
-print "Calculando bull eye score"
+#print "Calculando bull eye score"
 for i,nome in zip(scipy.arange(Nobj),name_arr):
  # Para cada linha de md estabelece rank de recuperação
  # ordenando a linha em ordem crescente de similaridade 

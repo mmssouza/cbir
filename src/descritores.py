@@ -201,17 +201,25 @@ def cd(fn,sigma=27.0):
 class angle_seq_signature:
 
  def __init__(self,fn,raio,sigma=27.0):
-  r = raio
+  #self.r = raio
   if (sigma != 0):
-   cont = contour(fn,sigma).c
+   self.cont = contour(fn,sigma).c
   else:
-   cont = contour_base(fn).c
-  N = cont.shape[0]
-  low = cont[0:r].copy()
-  high = cont[N-r:N].copy()
-  cont = np.hstack((high,cont,low))
+   self.cont = contour_base(fn).c
+  self.N = self.cont.shape[0]
+  aux = np.zeros((self.N,))
+  for i in range(1,self.N/8):
+   aux = aux + self.angle_seq(i);
+   
+  self.sig = aux/(self.N/8)
+  self.sig = self.sig/self.sig.max()
+  
+ def angle_seq(self,r):
+  low = self.cont[0:r].copy()
+  high = self.cont[self.N-r:self.N].copy()
+  cont = np.hstack((high,self.cont,low))
   a = []
-  for i in np.arange(r,N+r):
+  for i in np.arange(r,self.N+r):
    v1 = cont[i] - cont[i-r]
    v2 = cont[i+r] - cont[i]
    cc = (v1*v2).real/float(abs(v1)*abs(v2))
@@ -220,32 +228,9 @@ class angle_seq_signature:
    if cc < -1.0:
     cc = -1.0
    angle = acos(cc)
-   # angle = np.floor(angle * 180./np.pi)
-   # if angle in np.arange(0.,5.):
-   #  angle = 0
-   # elif angle in np.arange(5.,10.):
-   #  angle = 1
-   # elif angle in np.arange(10.,20.):
-   #  angle = 2
-   # elif angle in np.arange(20.,40.):
-   #  angle = 3
-   # elif angle in np.arange(40.,60.):
-   #  angle = 4
-   # elif angle in np.arange(60.,80.):
-   #  angle = 5
-   # elif angle in np.arange(80.,95.):
-   #  angle = 6
-   # elif angle in np.arange(95.,135.):
-   #  angle = 7
-   # elif angle in np.arange(135.,140.):
-   #  angle = 8
-   # elif angle in np.arange(140.,175.):
-   #  angle = 9
-   # elif angle in np.arange(175.,185.):
-   #  angle = 10
    a.append(angle)
-
-  self.sig = np.array(a)
+   
+  return np.array(a)
 
 # Triangle area signature
 class TAS:

@@ -31,9 +31,9 @@ def pdist(X,dist_func,w1,w2,w3):
 def rank40(tmp0,tmp1,tmp2,args):
  db1 = pickle.load(open(tmp0,"rb"))
  # Angle sequence signature
- db2 = pickle.load(open(tmp0,"rb"))
+ db2 = pickle.load(open(tmp1,"rb"))
  # Centroid distance
- db3 = pickle.load(open(tmp0,"rb"))
+ db3 = pickle.load(open(tmp2,"rb"))
 
  w1,w2,w3 = args[0],args[1],args[2]
  # nome das figuras

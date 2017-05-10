@@ -1,0 +1,36 @@
+ 
+
+A pasta da base de imagens, no caso leaves_160_png tem, além das imagens binarizadas, dois arquivos: classes.txt (dicionário com os nomes de todas as imagens chaves e as respectivas classes valores) e names.pkl (lista com o nome das 160 imagens selecionadas por amostragem). 
+
+Os scripts gera_*_sig.py são usados para geração dos descritores. Como saída,
+ estes geram um arquivo formato pkl com um dicionário nomes das figuras (chaves)
+ e vetor de atributos (valores). Na primeira posição do vetor de atributos é armazenada a classe da imagem. Em /src tem um script .bat com parâmetros
+ pré definidos para geração dos descritores
+
+gera_*_sig.py caminho para a base parâmetros arquivo de saida
+
+aii.py   :   Implementa o calcula do descritor area integral invariant
+chi_square.py  : Implementa distância chi square
+cost_func.py   : Desconsiderar (otimização)
+depso.py       : Desconsiderar (otimização)
+descritores.py : Implementa descritores (curvatura, distância cnetroide, etc)
+dkl.py         : Divergente KL
+fig_distancias.py : Desconsiderar
+gera_aii_sig.py  : Script para geração das assinaturas aii de uma base de imagens.
+gera_angle_sig.py :  geração da assinaturas de angulos de uma base de imagens
+gera_cd_sig.py  : Geração das assinaturas de distancia ao centroide de uma base de imagens
+gera_curvatura_sig.py : Geracao da assinatura curvatura de uma base de imagens
+gera_figura_ranked.py : Desconsiderar
+gera_tas_sig.py       : Gera assinatura TAS de uma base de imagens
+grafico_distancias.py : Gera gráfico comparativo das distancias conforme figura do artigo
+hellinger.py  :Implementacao da distancia hellinger
+jsd.py : Implementacao da distancia jensen shannon
+main.py   : Desconsiderar
+mostra_shape_dist.py : Gera figura com matriz de distancia das formas em níveis de cinza. Tem de especificar o nome das figuras das formas no script.
+Patrick_Fisher.py   : Implementa a distancia pf.
+pdist2.py           : Script para calculo otimizado pdist. Funciona para distancias simetricas (d(a,b) = d(b,a)) 
+PrecisionByRecall.py : Desconsiderar
+precision_recall.py : Desconsiderar
+rank.py   : Experimento de recuperação que contalibiza numero total de acertos por posição. 
+rank40.py : Experimento cbir para o cálculo do Bulls eye. Precisa especificar a distancia e os parametros do experimento
+rank_precision_recall.py : Desconsiderar

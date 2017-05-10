@@ -7,13 +7,12 @@ import descritores
 
 diretorio = sys.argv[1]
 
-f = open(diretorio+"classes.txt","r")
-cl = cPickle.load(f)
-f.close()
+cl = cPickle.load(open(diretorio+"classes.txt","r"))
+fnames = cPickle.load(open(diretorio+"names.pkl","r"))
 
 db = {}
 
-for im_file in cl.keys():
+for im_file in fnames:
    tmp = descritores.TAS(diretorio+im_file)
    db[im_file] = scipy.hstack((cl[im_file],tmp.sig))
 #   print im_file,db[im_file]

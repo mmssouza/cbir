@@ -2,7 +2,8 @@
 # descritores : módulo que implementa o cálculo de assinaturas e descritores de imagens
 
 import numpy as np
-import cv
+#import cv
+from skimage import measure,io,img_as_float
 from scipy.interpolate import interp1d 
 from scipy.spatial.distance import pdist,squareform
 from math import sqrt,acos
@@ -19,14 +20,20 @@ class contour_base:
 
   self.__i = 0
   if type(fn) is str:
-   im = cv.LoadImage(fn,cv.CV_LOAD_IMAGE_GRAYSCALE)
-   s = cv.FindContours(im,cv.CreateMemStorage(),cv.CV_RETR_LIST,cv.CV_CHAIN_APPROX_NONE) 
+   im = img_as_float(io.imread(fn))
+   s = measure.find_contours(im,.5)[0]
    self.c = np.array([complex(i[1],i[0]) for i in s])
-  elif (type(fn) is np.ndarray):
-    self.c = fn
-  elif (type(fn) is cv.iplimage):
-    s = cv.FindContours(fn,cv.CreateMemStorage(),cv.CV_RETR_LIST,cv.CV_CHAIN_APPROX_NONE) 
-    self.c = np.array([complex(i[1],i[0]) for i in s])
+  elif type(fn) is np.ndarray:
+   self.c = fn
+  #if type(fn) is str:
+   #im = cv.LoadImage(fn,cv.CV_LOAD_IMAGE_GRAYSCALE)
+   #s = cv.FindContours(im,cv.CreateMemStorage(),cv.CV_RETR_LIST,cv.CV_CHAIN_APPROX_NONE) 
+   #self.c = np.array([complex(i[1],i[0]) for i in s])
+  #elif (type(fn) is np.ndarray):
+    #self.c = fn
+  #elif (type(fn) is cv.iplimage):
+    #s = cv.FindContours(fn,cv.CreateMemStorage(),cv.CV_RETR_LIST,cv.CV_CHAIN_APPROX_NONE) 
+    #self.c = np.array([complex(i[1],i[0]) for i in s])
   N = self.c.size
   self.freq = np.fft.fftfreq(N,1./float(N))
 
@@ -112,7 +119,7 @@ class curvatura:
      curv = - curv.imag
      curv = curv/(np.abs(c.first_deriv())**3)
      # Array bidimensional curvs = Curvature Function k(sigma,t) 
-     self.curvs[i] = np.tanh(curv)*c.perimeter()   
+     self.curvs[i] = np.tanh(curv)*c.perimeter() 
  
   # Contructor 
   def __init__(self,fn = None,sigma_range = np.linspace(2,30,20)):
@@ -181,29 +188,38 @@ def cd(fn,sigma=27.0):
    img_c = contour_base(fn)
   # Calcula distância ao centróide
   dc = np.abs((img_c()-img_c().mean()))
+  dc = dc/np.max(dc)
   # m = maior distancia do contorno ao centroide
-  m = np.max(dc)
-  m = np.nonzero(dc == m)[0][0]
+  #m = np.max(dc)
+  #m = np.nonzero(dc == m)[0][0]
   # rearranja vetor a partir da maior distancia 
   # e normaliza valores
-  dc = np.r_[dc[m:],dc[0:m-1]]/float(dc[m])
+  #dc = np.r_[dc[m:],dc[0:m-1]]/float(dc[m])
   return dc
 
 # Angle sequence shape signature
 class angle_seq_signature:
 
  def __init__(self,fn,raio,sigma=27.0):
-  r = raio
+  #self.r = raio
   if (sigma != 0):
-   cont = contour(fn,sigma).c
+   self.cont = contour(fn,sigma).c
   else:
-   cont = contour_base(fn).c
-  N = cont.shape[0]
-  low = cont[0:r].copy()
-  high = cont[N-r:N].copy()
-  cont = np.hstack((high,cont,low))
+   self.cont = contour_base(fn).c
+  self.N = self.cont.shape[0]
+  aux = np.zeros((self.N,))
+  for i in range(1,round(self.N/8)):
+   aux = aux + self.angle_seq(i);
+   
+  self.sig = aux/round(self.N/8)
+  self.sig = self.sig/self.sig.max()
+  
+ def angle_seq(self,r):
+  low = self.cont[0:r].copy()
+  high = self.cont[self.N-r:self.N].copy()
+  cont = np.hstack((high,self.cont,low))
   a = []
-  for i in np.arange(r,N+r):
+  for i in np.arange(r,self.N+r):
    v1 = cont[i] - cont[i-r]
    v2 = cont[i+r] - cont[i]
    cc = (v1*v2).real/float(abs(v1)*abs(v2))
@@ -212,32 +228,9 @@ class angle_seq_signature:
    if cc < -1.0:
     cc = -1.0
    angle = acos(cc)
-   # angle = np.floor(angle * 180./np.pi)
-   # if angle in np.arange(0.,5.):
-   #  angle = 0
-   # elif angle in np.arange(5.,10.):
-   #  angle = 1
-   # elif angle in np.arange(10.,20.):
-   #  angle = 2
-   # elif angle in np.arange(20.,40.):
-   #  angle = 3
-   # elif angle in np.arange(40.,60.):
-   #  angle = 4
-   # elif angle in np.arange(60.,80.):
-   #  angle = 5
-   # elif angle in np.arange(80.,95.):
-   #  angle = 6
-   # elif angle in np.arange(95.,135.):
-   #  angle = 7
-   # elif angle in np.arange(135.,140.):
-   #  angle = 8
-   # elif angle in np.arange(140.,175.):
-   #  angle = 9
-   # elif angle in np.arange(175.,185.):
-   #  angle = 10
    a.append(angle)
-
-  self.sig = np.array(a)
+   
+  return np.array(a)
 
 # Triangle area signature
 class TAS:
@@ -257,8 +250,8 @@ class TAS:
  def __init__(self,fn):
   cont = contour_base(fn).c
   self.N = cont.shape[0]
-  print fn,self.N
-  Ts = np.floor((self.N-1)/2)
+  print(fn,self.N)
+  Ts = int(np.floor((self.N-1)/2))
   t = []
   for ts in np.arange(1,Ts):
    t.append(self.TAN(cont,ts))

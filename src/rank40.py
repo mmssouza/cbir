@@ -1,18 +1,16 @@
-#!/usr/bin/python
 # -*- coding: iso-8859-1 -*-
-import sys
-import cPickle
+import pickle
 import scipy
-import numpy as np
-# Jensen-shannon divergence
-#import jsd
-# Hellinger distance
+import jsd
 import hellinger as He
+import Patrick_Fisher as pf
+import chi_square
+import dkl
 
 # Calcula matriz de distâncias
 # Recebe como parâmetro as assinaturas
 # e uma função para o cálculo de distâncias
-def pdist(X,dist_func):
+def pdist(X,dist_func,w1,w2,w3):
 # pesos das caracteristicas para o cálculo da distância 
  N = X.shape[0]
  p = scipy.zeros((N,N))
@@ -24,62 +22,67 @@ def pdist(X,dist_func):
     d2 = dist_func(a[1],b[1])
     # Centroid distance
     d3 = dist_func(a[2],b[2])
-    # Area integral invariant
-    d4 = dist_func(a[3],b[3])
-    # distância da forma i para a forma j
-    p[i,j] = d1+d2+d3+d4
+    # Area integral invariant,fix_imports = True,encoding='iso-8859-1'
+
+    p[i,j] = w1*d1+w2*d2+w3*d3
  p = p + p.transpose()
  return p
 
-print "abrindo databases"
-# databases
-# Curvaturas
-db1 = cPickle.load(open(sys.argv[1]))
-# Angle sequence signature
-db2 = cPickle.load(open(sys.argv[2]))
-# Centroid distance
-db3 = cPickle.load(open(sys.argv[3]))
-# Area integral invariant
-db4 = cPickle.load(open(sys.argv[4]))
+def rank40(tmp0,tmp1,tmp2,args):
+ db1 = pickle.load(open(tmp0,"rb"))
+ # Angle sequence signature
+ db2 = pickle.load(open(tmp0,"rb"))
+ # Centroid distance
+ db3 = pickle.load(open(tmp0,"rb"))
 
-# nome das figuras
-name_arr = scipy.array(db1.keys())
+ w1,w2,w3 = args[0],args[1],args[2]
+ # nome das figuras
+ name_arr = scipy.array([i for i in iter(db1.keys())])
+ # dicionario nome das figuras - classes
+ cl = dict(zip(name_arr.tolist(),[db1[n][0] for n in iter(db1.keys())]))
 
-# dicionario nome das figuras - classes
-cl = dict(zip(name_arr,[db1[n][0] for n in name_arr]))
+ # vetores de caracteristicas e classes
+ data = scipy.array([[db1[n][1:],db2[n][1:],db3[n][1:]] for n in name_arr])
 
-print "gerando base de histogramas"
-# vetores de caracteristicas e classes
-#data = scipy.array([scipy.fromstring(db[nome],sep=' ')[0:70] for nome in name_arr])
-data = scipy.array([[db1[n][1:],db2[n][1:],db3[n][1:],db4[n][1:]] for n in name_arr])
 
-# distancia : medida de dissimilaridade a ser empregada 
-#distancias = ['braycurtis','canberra','chebyshev','cityblock','correlation',
-#              'cosine','dice','euclidean','hamming','jaccard',
-#              'kulsinski','mahalanobis','matching','minkowski',
-#              'rogerstanimoto','russelrao','seuclidean','sokalmichener',
-#              'sokalsneath','sqeuclidean','yule']
+##################################################
+# TEM DE ESPECIFICAR AQUI QUAL DISTANCIA UTILIZAR
+#####################################3############
 
 # Jensen-Shannon divergence
 #distancia = jsd.jsd
+
+# Chi square
+#distancia = chi_square.chi_square
+
+# Kullback Leiben
+#distancia = dkl.D_KL
+
+# Patrick Fisher
+#distancia = pf.Patrick_Fisher
+
 # Hellinger divergence
-distancia = He.He
+ distancia = He.He
 
-# Numero de amostras
-Nobj = data.shape[0]
+##########################################
+# Numero de amostras da base
+##########################################
+ Nobj = data.shape[0]
 
-# Numero de recuperacoes para o cálculo do Bull eye
-Nretr = 40
+###################################################################
+# Numero de recuperacoes (o dobro to total de amostras por classe)
+###################################################################
+ Nretr = 10
 
 # Acumulador para contabilizar desempenho do experimento
-tt = 0
+ tt = 0
 
 # Calcula matriz de distancias 
-print "Calculando matriz de distancias"
-md = pdist(data,distancia)
+#print "Calculando matriz de distancias"
+ md = pdist(data,distancia,w1,w2,w3)
 
-print "Calculando bull eye score"
-for i,nome in zip(scipy.arange(Nobj),name_arr):
+#print "Calculando bull eye score"
+ for i,nome in zip(scipy.arange(Nobj),name_arr):
  # Para cada linha de md estabelece rank de recuperação
  # ordenando a linha em ordem crescente de similaridade 
  # O primeiro elemento da linha corresponde a forma modelo
@@ -100,5 +103,5 @@ for i,nome in zip(scipy.arange(Nobj),name_arr):
   tt = tt + tp
     
 # Bull eye
-print 100*tt/float(1400*20)  
+ return (100*tt/float(Nobj*5))  
 

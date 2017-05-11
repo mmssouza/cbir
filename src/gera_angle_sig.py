@@ -5,17 +5,16 @@ import tempfile
 import descritores
 
 
-def gera_angle_sig(diretorio,args):
+def gera_angle_sig(cl,args,cntr_dict):
  bins = int(round(args[0]))
  rmin = 0.
  rmax = 1.
  s = args[1]
- cl = pickle.load(open(diretorio+"classes.txt","rb"))
- fnames = pickle.load(open(diretorio+"names.pkl","rb"))
+ 
  db = {}
 
- for im_file in fnames:
-   tmp = descritores.angle_seq_signature(diretorio+im_file,0.,sigma = s)
+ for im_file in iter(cntr_dict):
+   tmp = descritores.angle_seq_signature(cntr_dict[im_file],0.,sigma = s)
    h = np.histogram(tmp.sig,bins = bins,range = (rmin,rmax))
    h = h[0].astype(float)/float(h[0].sum())
    db[im_file] = np.hstack((cl[im_file],h))

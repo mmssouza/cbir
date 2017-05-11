@@ -5,13 +5,19 @@ from gera_cd_sig import gera_cd_sig
 from gera_curvatura_sig import gera_curvatura_sig
 from rank40 import rank40
 from multiprocessing import Queue,Process
+from descritores import contour_base
+import pickle
 
 diretorio = '../leaves_160_png/'
+
+fnames = pickle.load(open(diretorio+"names.pkl","rb"))
+cl = pickle.load(open(diretorio+"classes.txt","rb"))
+contours = [contour_base(diretorio+fn).c for fn in fnames]
 
 def worker(in_q,out_q):
   args = in_q.get()
   f = args[0]
-  out_q.put(f(diretorio,args[1]))
+  out_q.put(f(cl,args[1],dict(zip(fnames,contours))))
 
 
 def cost_func(args):
@@ -40,6 +46,9 @@ def cost_func(args):
  tmp0 = out_q.get()
  tmp1 = out_q.get()
  tmp2 = out_q.get()
+ 
+ for p in threads:
+  p.join()
  
 # print "passo 2 - Bull eye"
  res = rank40(tmp0,tmp1,tmp2,rank_args)

@@ -1,20 +1,19 @@
 # -*- coding: iso-8859-1 -*-
 import pickle
 import scipy
-# Jensen-shannon divergence
 import jsd
-# Hellinger distance
-# Distancia chi square
 import chi_square
 import hellinger as He
 import Patrick_Fisher
 from multiprocessing import JoinableQueue,Queue,Process
 from pdist2 import pdist3
+import settings
 
 # Jensen-Shannon divergence
-#distancia = jsd.jsd
+dd = {"Hellinger":He.He,"Jensen Shannon":jsd.jsd,"Patrick Fisher":Patrick_Fisher.Patrick_Fisher,"Chi Square":chi_square.chi_square}
+distancia = dd[settings.distancia]
 # Hellinger divergence
-distancia = He.He
+#distancia = He.He
 #distancia = Patrick_Fisher.Patrick_Fisher
 #distancia = chi_square.chi_square
 
@@ -56,16 +55,6 @@ def rank40(tmp0,tmp1,tmp2,args):
 # Numero de amostras
  Nobj = data.shape[0]
 
-# pesos das caracteristicas para o cálculo da distância 
-# distancia : medida de dissimilaridade a ser empregada 
-#distancias = ['braycurtis','canberra','chebyshev','cityblock','correlation',
-#              'cosine','dice','euclidean','hamming','jaccard',
-#              'kulsinski','mahalanobis','matching','minkowski',
-#              'rogerstanimoto','russelrao','seuclidean','sokalmichener',
-#              'sokalsneath','sqeuclidean','yule']
-
-# Numero de recuperacoes para o cálculo do Bull eye
- Nretr = 100
 
  in_q,out_q = JoinableQueue(),Queue()
 
@@ -76,7 +65,7 @@ def rank40(tmp0,tmp1,tmp2,args):
 
  for p in threads:
   p.start()
-
+  
  idx_l = scipy.arange(0,Nobj,2)
  idx_h = scipy.arange(1,Nobj+1,2) 
 # print "Calculando matriz de distancias"
@@ -138,7 +127,7 @@ def rank40(tmp0,tmp1,tmp2,args):
  # pega classes a qual pertencem as imagens recuperadas
   aux = [cl[j] for j in name_retr]
   # estamos interessados apenas nos Nretr (40) resultados
-  classe_retrs = aux[0:Nretr]
+  classe_retrs = aux[0:settings.Nretr]
   # Contabiliza desempenho contando o número de formas da mesma classe
   # do modelo (tp) dentre as 40 recuperadas
   # Atualiza o resultado acumulado (tt)
@@ -147,5 +136,5 @@ def rank40(tmp0,tmp1,tmp2,args):
   tt = tt + tp
     
 # Bull eye
- return tt/float(Nobj*50)  
+ return tt/float(Nobj*int(settings.Nretr/2))  
 

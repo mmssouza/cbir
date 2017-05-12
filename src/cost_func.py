@@ -8,8 +8,9 @@ from rank40_mt import rank40
 from multiprocessing import Queue,Process
 from descritores import contour_base
 import pickle
+import settings
 
-diretorio = '../leaves_png/'
+diretorio = settings.diretorio
 
 fnames = pickle.load(open(diretorio+"names.pkl","rb"))
 cl = pickle.load(open(diretorio+"classes.txt","rb"))

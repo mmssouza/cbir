@@ -10,11 +10,12 @@ def gera_angle_sig(cl,args,cntr_dict):
  rmin = 0.
  rmax = 1.
  s = args[1]
+ r = args[2]
  
  db = {}
 
  for im_file in iter(cntr_dict):
-   tmp = descritores.angle_seq_signature(cntr_dict[im_file],0.,sigma = s)
+   tmp = descritores.angle_seq_signature(cntr_dict[im_file],r,sigma = s)
    h = np.histogram(tmp.sig,bins = bins,range = (rmin,rmax))
    h = h[0].astype(float)/float(h[0].sum())
    db[im_file] = np.hstack((cl[im_file],h))

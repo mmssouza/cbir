@@ -20,7 +20,7 @@ class contour_base:
 
   self.__i = 0
   if type(fn) is str:
-   im = img_as_float(io.imread(fn))
+   im = img_as_float(io.imread(fn, as_grey = True))
    s = measure.find_contours(im,.5)[0]
    self.c = np.array([complex(i[1],i[0]) for i in s])
   elif type(fn) is np.ndarray:
@@ -206,12 +206,17 @@ class angle_seq_signature:
    self.cont = contour(fn,sigma).c
   else:
    self.cont = contour_base(fn).c
-  self.N = self.cont.shape[0]
-  aux = np.zeros((self.N,))
-  for i in range(1,round(self.N/8)):
-   aux = aux + self.angle_seq(i);
    
-  self.sig = aux/round(self.N/8)
+  self.N = self.cont.shape[0] 
+  
+  if raio != 0.:   
+   self.sig = self.angle_seq(int(round(raio*self.N)))
+  else: 
+   aux = np.zeros((self.N,))
+   for i in range(1,round(self.N/8),4):
+    aux = aux + self.angle_seq(i);
+    self.sig = aux/len(range(1,round(self.N/8),4))
+  
   self.sig = self.sig/self.sig.max()
   
  def angle_seq(self,r):

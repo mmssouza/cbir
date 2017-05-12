@@ -72,7 +72,7 @@ def rank40(tmp0,tmp1,tmp2,args):
 ###################################################################
 # Numero de recuperacoes (o dobro to total de amostras por classe)
 ###################################################################
- Nretr = 10
+ Nretr = 100
 
 # Acumulador para contabilizar desempenho do experimento
  tt = 0
@@ -103,5 +103,5 @@ def rank40(tmp0,tmp1,tmp2,args):
   tt = tt + tp
     
 # Bull eye
- return (100*tt/float(Nobj*5))  
+ return (100*tt/float(Nobj*50))  
 

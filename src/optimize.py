@@ -57,7 +57,7 @@ class sim_ann:
    si = self.Perturba(self.s.copy())
    aux = self.fc(si)
    delta = aux - self.fit
-   if (delta > 0) or (math.exp(delta/self.T) > scipy.rand()):
+   if (delta > 0) or (math.exp(10*delta/self.T) > scipy.rand()):
     self.s = si.copy()
     self.fit = aux
     self.nS = self.nS + 1

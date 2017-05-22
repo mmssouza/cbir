@@ -209,14 +209,7 @@ class angle_seq_signature:
    
   self.N = self.cont.shape[0] 
   
-  if raio != 0.:   
-   self.sig = self.angle_seq(int(round(raio*self.N)))
-  else: 
-   aux = np.zeros((self.N,))
-   for i in range(1,round(self.N/8),4):
-    aux = aux + self.angle_seq(i);
-    self.sig = aux/len(range(1,round(self.N/8),4))
-  
+  self.sig = self.angle_seq(int(round(raio*self.N)))
   self.sig = self.sig/self.sig.max()
   
  def angle_seq(self,r):

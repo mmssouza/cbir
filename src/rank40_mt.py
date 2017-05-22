@@ -59,7 +59,7 @@ def rank40(tmp0,tmp1,tmp2,args):
  in_q,out_q = JoinableQueue(),Queue()
 
  threads = []
- for i in range(settings.Nthreads):
+ for i in range(settings.N_Threads):
     t =  Process(target=worker,args=(in_q,out_q))
     threads.append(t)
 

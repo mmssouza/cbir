@@ -47,14 +47,14 @@ def cost_func(args):
  in_q.put([gera_curvatura_sig,curv_args])
 
  in_q.join()
- 
- for p in threads:
-  p.terminate()
-  
+   
  tmp0 = out_q.get()
  tmp1 = out_q.get()
  tmp2 = out_q.get()
  
+ for p in threads:
+  p.terminate()
+
  
 # print "passo 2 - Bull eye"
  res = rank40(tmp0,tmp1,tmp2,rank_args)

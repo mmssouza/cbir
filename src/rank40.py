@@ -84,7 +84,7 @@ Nobj = data.shape[0]
 ###################################################################
 # Numero de recuperacoes (o dobro to total de amostras por classe)
 ###################################################################
-Nretr = 10
+Nretr = 100
 
 # Acumulador para contabilizar desempenho do experimento
 tt = 0
@@ -115,5 +115,5 @@ for i,nome in zip(scipy.arange(Nobj),name_arr):
   tt = tt + tp
     
 # Bull eye
-print 100*tt/float(Nobj*5)  
+print 100*tt/float(Nobj*50)  
 

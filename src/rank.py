@@ -11,8 +11,22 @@ import Patrick_Fisher as pf
 import chi_square
 import dkl
 
+# parametros
+db1 = cPickle.load(open(sys.argv[1]))
+db2 = cPickle.load(open(sys.argv[2]))
+db3 = cPickle.load(open(sys.argv[3]))
+w1,w2,w3 = float(sys.argv[4]),float(sys.argv[5]),float(sys.argv[6])
+# nome das figuras
+name_arr = scipy.array(db1.keys())
+
+# dicionario nome das figuras - classes
+cl = dict(zip(name_arr,[int(db1[i][0]) for i in name_arr]))
+
+# vetores de caracteristicas e classes
+data = scipy.array([[db1[nome][1:],db2[nome][1:],db3[nome][1:]] for nome in name_arr])
+
 def pdist(X,dist_func):
- w1,w2,w3 = (0.45,0.45,0.1)
+ 
  N = X.shape[0]
  p = scipy.zeros((N,N))
  for i,a in zip(scipy.arange(N),X):
@@ -25,20 +39,6 @@ def pdist(X,dist_func):
 #    p[i,j] = np.min([d1,d2])
  p = p + p.transpose()
  return p
-
-# parametros
-db1 = cPickle.load(open(sys.argv[1]))
-db2 = cPickle.load(open(sys.argv[2]))
-db3 = cPickle.load(open(sys.argv[3]))
-
-# nome das figuras
-name_arr = scipy.array(db1.keys())
-
-# dicionario nome das figuras - classes
-cl = dict(zip(name_arr,[int(db1[i][0]) for i in name_arr]))
-
-# vetores de caracteristicas e classes
-data = scipy.array([[db1[nome][1:],db2[nome][1:],db3[nome][1:]] for nome in name_arr])
 
 ##################################################
 # TEM DE ESPECIFICAR AQUI QUAL DISTANCIA UTILIZAR

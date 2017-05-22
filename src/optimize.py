@@ -204,7 +204,7 @@ class de:
      c[k] = u[k]  
 
    c_fit = self.ff(c) 
-   self.fit[i] = self.ff(self.pop[i])
+   #self.fit[i] = self.ff(self.pop[i])
        
    # leva para proxima geracao quem tiver melhor fitness
    if c_fit > self.fit[i]:

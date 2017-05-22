@@ -5,7 +5,7 @@ from gera_cd_sig import gera_cd_sig
 from gera_curvatura_sig import gera_curvatura_sig
 from rank40_mt import rank40
 #from rank40 import rank40
-from multiprocessing import Queue,Process
+from multiprocessing import JoinableQueue,Queue,Process
 from descritores import contour_base
 import pickle
 import settings
@@ -17,10 +17,11 @@ cl = pickle.load(open(diretorio+"classes.txt","rb"))
 contours = [contour_base(diretorio+fn).c for fn in fnames]
 
 def worker(in_q,out_q):
-  args = in_q.get()
-  f = args[0]
-  out_q.put(f(cl,args[1],dict(zip(fnames,contours))))
-
+  while True:
+   args = in_q.get()
+   f = args[0]
+   out_q.put(f(cl,args[1],dict(zip(fnames,contours))))
+   in_q.task_done()
 
 def cost_func(args):
 
@@ -29,12 +30,12 @@ def cost_func(args):
  cd_args = args[7:9]
  rank_args = args[9:12]
  
- in_q,out_q = Queue(),Queue()
+ in_q,out_q = JoinableQueue(),Queue()
 
 # print "passo 1 - Extracao caracteristicas"
  
  threads = []
- for i in range(3):
+ for i in range(settings.N_Threads):
   t =  Process(target=worker,args=(in_q,out_q))
   threads.append(t)
 
@@ -45,8 +46,10 @@ def cost_func(args):
  in_q.put([gera_cd_sig,cd_args])
  in_q.put([gera_curvatura_sig,curv_args])
 
+ in_q.join()
+ 
  for p in threads:
-  p.join()
+  p.terminate()
   
  tmp0 = out_q.get()
  tmp1 = out_q.get()

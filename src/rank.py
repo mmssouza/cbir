@@ -1,8 +1,8 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 # -*- coding: iso-8859-1 -*-
 import sys
 #import math
-import cPickle
+import pickle
 import numpy as np
 import scipy
 import jsd
@@ -12,12 +12,13 @@ import chi_square
 import dkl
 
 # parametros
-db1 = cPickle.load(open(sys.argv[1]))
-db2 = cPickle.load(open(sys.argv[2]))
-db3 = cPickle.load(open(sys.argv[3]))
-w1,w2,w3 = float(sys.argv[4]),float(sys.argv[5]),float(sys.argv[6])
+db1 = pickle.load(open(sys.argv[1],"rb"))
+db2 = pickle.load(open(sys.argv[2],"rb"))
+db3 = pickle.load(open(sys.argv[3],"rb"))
+dist = sys.argv[4]
+w1,w2,w3 = float(sys.argv[5]),float(sys.argv[6]),float(sys.argv[7])
 # nome das figuras
-name_arr = scipy.array(db1.keys())
+name_arr = scipy.array([k for k in iter(db1.keys())])
 
 # dicionario nome das figuras - classes
 cl = dict(zip(name_arr,[int(db1[i][0]) for i in name_arr]))
@@ -43,21 +44,9 @@ def pdist(X,dist_func):
 ##################################################
 # TEM DE ESPECIFICAR AQUI QUAL DISTANCIA UTILIZAR
 #####################################3############
+dist_dict = {"HE":He.He,"JS":jsd.jsd,"PF":pf.Patrick_Fisher,"CS":chi_square.chi_square}
 
-# Jensen-Shannon divergence
-#distancia = jsd.jsd
-
-# Chi square
-#distancia = chi_square.chi_square
-
-# Kullback Leiben
-#distancia = dkl.D_KL
-
-# Patrick Fisher
-#distancia = pf.Patrick_Fisher
-
-# Hellinger divergence
-distancia = He.He
+distancia = dist_dict[dist]
 
 ##########################################
 # Numero de amostras da base
@@ -69,7 +58,7 @@ Nclasses = max(cl.values())
 
 # Total de amostras por classe
 # assumindo que a base e balanceada!!!!
-Nac = Nobj/Nclasses
+Nac = int(Nobj/Nclasses)
 
 # Numero de recuperacoes
 Nretr = Nac
@@ -78,8 +67,9 @@ Nretr = Nac
 md = pdist(data,distancia)
 # Para contabilizar a Matriz de confusão
 l = scipy.zeros((Nclasses,Nac),dtype = int)
-
-for i,nome in zip(scipy.arange(Nobj),name_arr):
+# Acumulador para contabilizar desempenho do experimento
+tt = 0
+for i,nome in enumerate(name_arr):
 # Para cada linha de md estabelece rank de recuperacao
 # O primeiro elemento de cada linha corresponde a forma modelo
 # Obtem a classe dos objetos recuperados pelo ordem crescente de distancia
@@ -94,5 +84,11 @@ for i,nome in zip(scipy.arange(Nobj),name_arr):
  # Contabiliza resultados
   for i in n[0]:
    l[classe_padrao-1,i] = l[classe_padrao-1,i] + 1 
-
-print(l.sum(axis = 0))
+  # Bulls eye 
+  classe_retrs = aux[0:2*Nretr]
+  n = scipy.nonzero(classe_retrs == classe_padrao)
+  tp = float(n[0].size)
+  tt = tt + tp
+  
+print(tt/float(Nobj*Nretr))  
+print(l.sum(axis = 0)/Nobj)

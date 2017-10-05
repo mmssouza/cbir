@@ -26,4 +26,4 @@ for im_file in fnames:
    h = h[0].astype(float)/float(h[0].sum())
    db[im_file] = np.hstack((cl[im_file],h))
    
-pickle.dump(db,open(sys.argv[4],"wb"))
+pickle.dump(db,open(sys.argv[6],"wb"),0)

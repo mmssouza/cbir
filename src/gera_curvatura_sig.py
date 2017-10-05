@@ -22,4 +22,4 @@ for im_file in fnames:
    db[im_file] = np.hstack((cl[im_file],h))
 #   print im_file,db[im_file]
    
-pickle.dump(db,open(sys.argv[6],"wb"))
+pickle.dump(db,open(sys.argv[6],"wb"),0)

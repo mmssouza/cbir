@@ -39,11 +39,13 @@ db2 = pickle.load(open(sys.argv[2],"rb"))
 # Centroid distance
 db3 = pickle.load(open(sys.argv[3],"rb"))
 
-w1 = float(sys.argv[4])
+dist = sys.argv[4]
 
-w2 = float(sys.argv[5])
+w1 = float(sys.argv[5])
 
-w3 = float(sys.argv[6])
+w2 = float(sys.argv[6])
+
+w3 = float(sys.argv[7])
 
 # nome das figuras
 name_arr = scipy.array([i for i in iter(db1.keys())])
@@ -59,21 +61,9 @@ data = scipy.array([[db1[n][1:],db2[n][1:],db3[n][1:]] for n in name_arr])
 ##################################################
 # TEM DE ESPECIFICAR AQUI QUAL DISTANCIA UTILIZAR
 #####################################3############
+dist_dict = {"HE":He.He,"JS":jsd.jsd,"PF":pf.Patrick_Fisher,"CS":chi_square.chi_square}
 
-# Jensen-Shannon divergence
-#distancia = jsd.jsd
-
-# Chi square
-#distancia = chi_square.chi_square
-
-# Kullback Leiben
-#distancia = dkl.D_KL
-
-# Patrick Fisher
-#distancia = pf.Patrick_Fisher
-
-# Hellinger divergence
-distancia = He.He
+distancia = dist_dict[dist]
 
 ##########################################
 # Numero de amostras da base
@@ -83,7 +73,7 @@ Nobj = data.shape[0]
 ###################################################################
 # Numero de recuperacoes (o dobro to total de amostras por classe)
 ###################################################################
-Nretr = 100
+Nretr = 20
 
 # Acumulador para contabilizar desempenho do experimento
 tt = 0
@@ -114,4 +104,4 @@ for i,nome in zip(scipy.arange(Nobj),name_arr):
   tt = tt + tp
     
 # Bull eye
-print(100*tt/float(Nobj*50))  
+print(100*tt/float(Nobj*10))  

@@ -119,8 +119,9 @@ class curvatura:
      curv = - curv.imag
      curv = curv/(np.abs(c.first_deriv())**3)
      # Array bidimensional curvs = Curvature Function k(sigma,t) 
-     self.curvs[i] = np.tanh(curv)*c.perimeter() 
- 
+     #self.curvs[i] = np.tanh(curv)*c.perimeter() 
+     self.curvs[i] = np.tanh(curv) 
+  
   # Contructor 
   def __init__(self,fn = None,sigma_range = np.linspace(2,30,20)):
    # Extrai contorno da imagem

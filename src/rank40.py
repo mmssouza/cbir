@@ -3,9 +3,12 @@ import pickle
 import scipy
 import jsd
 import hellinger as He
-import Patrick_Fisher as pf
+import Patrick_Fisher 
 import chi_square
-import dkl
+import settings
+
+dd = {"Hellinger":He.He,"Jensen Shannon":jsd.jsd,"Patrick Fisher":Patrick_Fisher.Patrick_Fisher,"Chi Square":chi_square.chi_square}
+distancia = dd[settings.distancia]
 
 # Calcula matriz de distâncias
 # Recebe como parâmetro as assinaturas
@@ -72,7 +75,7 @@ def rank40(tmp0,tmp1,tmp2,args):
 ###################################################################
 # Numero de recuperacoes (o dobro to total de amostras por classe)
 ###################################################################
- Nretr = 100
+ Nretr = settings.Nretr
 
 # Acumulador para contabilizar desempenho do experimento
  tt = 0
@@ -103,5 +106,4 @@ def rank40(tmp0,tmp1,tmp2,args):
   tt = tt + tp
     
 # Bull eye
- return (100*tt/float(Nobj*50))  
-
+ return tt/float(Nobj*int(settings.Nretr/2))  

@@ -1,6 +1,6 @@
 
-diretorio = '/home/comum/swedish_png/'
-
+dataset_path = '../datasets/1400_mpeg7/'
+temp_path = "/dev/shm/"
 
 N_Threads = 4 
 
@@ -16,6 +16,6 @@ Niter = 220
 #params = (90,0.95,4,2)
 
 algo = "de"
-params = (120,0.35,0.65)
+params = (50,0.35,0.65)
 
-Nretr = 10
+Nretr = 20

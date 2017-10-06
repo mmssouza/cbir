@@ -1,15 +1,15 @@
-#!/usr/bin/python3
 
 import numpy as np
 import tempfile
 import pickle
 import descritores as desc
+import settings
 
 def gera_curvatura_sig(cl,args,cntr_dict):
  sigma = args[0]
  bins = int(round(args[1]))
- rmin = args[2]
- rmax = args[3]
+ rmin = -1.
+ rmax = 1.
  
  db = {}
 
@@ -19,6 +19,6 @@ def gera_curvatura_sig(cl,args,cntr_dict):
    h = h[0].astype(float)/float(h[0].sum())
    db[im_file] = np.hstack((cl[im_file],h))
    
- tmp0 = tempfile.NamedTemporaryFile(suffix ='.pkl',dir='/tmp',delete = False)        
+ tmp0 = tempfile.NamedTemporaryFile(suffix ='.pkl',dir=settings.tmp_path,delete = False)        
  pickle.dump(db,tmp0)
  return tmp0.name

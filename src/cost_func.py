@@ -10,7 +10,7 @@ from descritores import contour_base
 import pickle
 import settings
 
-diretorio = settings.diretorio
+diretorio = settings.dataset_path
 
 fnames = pickle.load(open(diretorio+"names.pkl","rb"))
 cl = pickle.load(open(diretorio+"classes.txt","rb"))
@@ -25,10 +25,10 @@ def worker(in_q,out_q):
 
 def cost_func(args):
 
- curv_args = args[0:4]
- angle_args = args[4:7]
- cd_args = args[7:9]
- rank_args = args[9:12]
+ curv_args = args[0:2]
+ angle_args = args[2:5]
+ cd_args = args[5:7]
+ rank_args = args[7:10]
  
  in_q,out_q = JoinableQueue(),Queue()
 

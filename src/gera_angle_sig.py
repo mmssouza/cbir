@@ -3,6 +3,7 @@ import numpy as np
 import pickle
 import tempfile
 import descritores
+import settings
 
 
 def gera_angle_sig(cl,args,cntr_dict):
@@ -20,7 +21,7 @@ def gera_angle_sig(cl,args,cntr_dict):
    h = h[0].astype(float)/float(h[0].sum())
    db[im_file] = np.hstack((cl[im_file],h))
    
- tmp0 = tempfile.NamedTemporaryFile(suffix ='.pkl',dir='/tmp',delete = False)   
+ tmp0 = tempfile.NamedTemporaryFile(suffix ='.pkl',dir=settings.tmp_path,delete = False)   
  pickle.dump(db,tmp0)
  
  return tmp0.name

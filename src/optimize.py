@@ -6,13 +6,13 @@ import math
 import numpy as np
 from numpy.random import seed,random_integers,rand,permutation
 from functools import partial
-Dim = 11
+Dim = 12
 
 def set_dim(d):
 
  setattr(sys.modules[__name__],"Dim",d)
 
-limits = [(0,170),(4,300),(-30000,-500),(500,30000),(4,300),(0,170),(4,300),(0,170),(0.,1.),(0.,1.),(0.,1.)]
+limits = [(0,170),(4,300),(-30000,-500),(500,30000),(0.35,0.75),(4,300),(0,170),(4,300),(0,170),(0.,1.),(0.,1.),(0.,1.)]
 
 class sim_ann:
 

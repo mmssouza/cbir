@@ -8,9 +8,12 @@ echo $curv_fname
 echo $cd_fname
 echo $angle_fname
 
-./gera_curvatura_sig.py $1 85. 204 -13939 7799 $curv_fname
-./gera_cd_sig.py $1 84 89.4 $cd_fname
-./gera_angle_sig.py $1 0.351 123 77.7 $angle_fname
-
-./rank40.py $curv_fname $cd_fname $angle_fname HE 0.29 0.724 0.965
-./rank.py  $curv_fname $cd_fname $angle_fname HE 0.29 0.724 0.965
+./gera_curvatura_sig.py $1 20 155 -16000 16000 $curv_fname
+./gera_cd_sig.py $1 10 100 $cd_fname
+./gera_angle_sig.py $1 0.45 145 25 $angle_fname
+for d in HE JS CS PF
+do
+echo $d
+#./rank40.py $curv_fname $cd_fname $angle_fname JS 0.45 0.45 0.1
+./rank.py  $curv_fname $cd_fname $angle_fname $d 0.45 0.45 0.1
+done
